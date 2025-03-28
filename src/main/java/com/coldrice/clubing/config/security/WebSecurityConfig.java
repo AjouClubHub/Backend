@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.filter.JwtAuthenticationFilter;
 import com.coldrice.clubing.filter.JwtAuthorizationFilter;
 import com.coldrice.clubing.jwt.JwtUtil;
@@ -27,6 +28,7 @@ public class WebSecurityConfig {
 	private final JwtUtil jwtUtil;
 	private final UserDetailsServiceImpl userDetailsService;
 	private final AuthenticationConfiguration authenticationConfiguration;
+	private final MemberRepository memberRepository;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -40,7 +42,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, memberRepository);
 		filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
 		return filter;
 	}

@@ -10,7 +10,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.auth.dto.LoginRequest;
+import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.entity.MemberRole;
+import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,9 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final JwtUtil jwtUtil;
+	private MemberRepository memberRepository;
 
-	public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+	public JwtAuthenticationFilter(JwtUtil jwtUtil, MemberRepository memberRepository) {
 		this.jwtUtil = jwtUtil;
+		this.memberRepository = memberRepository;
 		setFilterProcessesUrl("/api/auth/login");
 	}
 
@@ -34,6 +38,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		log.info("로그인 시도");
 		try {
 			LoginRequest requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);
+
+			Member member = memberRepository.findByEmail(requestDto.email())
+				.orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저 이메일입니다."));
+
+			// if (member.getDeletedAt() != null) {
+			// 	throw new GlobalException(DELETED_USER);
+			// }
 
 			return getAuthenticationManager().authenticate(
 				new UsernamePasswordAuthenticationToken(
