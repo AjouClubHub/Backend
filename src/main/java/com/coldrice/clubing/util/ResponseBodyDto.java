@@ -20,7 +20,12 @@ public class ResponseBodyDto<T> {
 	public static <T> ResponseBodyDto<T> success(String message,T data) {
 		return new ResponseBodyDto<>("Success", message ,data);
 	}
+
 	public static <T> ResponseBodyDto<T> success(String message) {
 		return new ResponseBodyDto<>("Success", message ,null);
+	}
+
+	public static <T> ResponseBodyDto<T> fail(String message, T data) {
+		return new ResponseBodyDto<>("Fail", message, data);
 	}
 }

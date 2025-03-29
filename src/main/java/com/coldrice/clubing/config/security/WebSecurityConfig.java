@@ -18,7 +18,10 @@ import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.filter.JwtAuthenticationFilter;
 import com.coldrice.clubing.filter.JwtAuthorizationFilter;
 import com.coldrice.clubing.jwt.JwtUtil;
+import com.coldrice.clubing.util.ResponseBodyDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -77,6 +80,19 @@ public class WebSecurityConfig {
 					"/webjars/**"
 				).permitAll() // Swagger 관련 요청 허용
 				.anyRequest().authenticated() // 그 외 모든 요청 인증처리
+		);
+
+		// 사용자 권한 관리
+		http.exceptionHandling(eh -> eh
+			.accessDeniedHandler((request, response, accessDeniedException) -> {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				response.setContentType("application/json;charset=UTF-8");
+
+				ResponseBodyDto<Object> errorResponse = ResponseBodyDto.fail("접근 권한이 없습니다.", null);
+				String json = new ObjectMapper().writeValueAsString(errorResponse);
+
+				response.getWriter().write(json);
+			})
 		);
 
 		// 필터 관리
