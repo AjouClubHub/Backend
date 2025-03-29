@@ -3,7 +3,7 @@ package com.coldrice.clubing.domain.club.entity;
 import java.util.Arrays;
 
 public enum ClubCategory {
-	CLUB_A, CLUB_B;
+	운동, 문화예술공연, IT, 봉사사회활동, 학술교양, 창업취업;
 
 	public static ClubCategory of(String role) {
 		return Arrays.stream(ClubCategory.values())

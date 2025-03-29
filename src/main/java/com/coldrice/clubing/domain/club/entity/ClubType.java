@@ -3,8 +3,7 @@ package com.coldrice.clubing.domain.club.entity;
 import java.util.Arrays;
 
 public enum ClubType {
-	과학기술, 레저스포츠, 사회활동, 연행예술, 종교,
-	창작전시, 체육, 학술언론;
+	동아리, 소학회;
 
 	public static ClubType of(String role) {
 		return Arrays.stream(ClubType.values())
