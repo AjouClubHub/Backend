@@ -37,7 +37,7 @@ public class Club extends Timestamped {
 	private String description;
 
 	@Enumerated(EnumType.STRING)
-	private ClubStatus status;
+	private ClubStatus status = ClubStatus.PENDING;
 
 	private ClubCategory category;
 
