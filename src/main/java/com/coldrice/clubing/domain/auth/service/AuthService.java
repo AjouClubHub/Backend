@@ -9,6 +9,8 @@ import com.coldrice.clubing.domain.auth.dto.SignupResponse;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
+import com.coldrice.clubing.exception.customException.GlobalException;
+import com.coldrice.clubing.exception.enums.ExceptionCode;
 import com.coldrice.clubing.jwt.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -24,12 +26,18 @@ public class AuthService {
 
 	@Transactional
 	public SignupResponse signup(SignupRequest signupRequest) {
+
+		// 아주대 이메일 도메인 확인
+		if (!signupRequest.email().endsWith("@ajou.ac.kr")) {
+			throw new GlobalException(ExceptionCode.INVALID_EMAIL_DOMAIN);
+		}
+
+		// 이메일 중복 확인
 		if (memberRepository.existsByEmail(signupRequest.email())) {
-			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+			throw new GlobalException(ExceptionCode.EMAIL_DUPLICATE);
 		}
 
 		String encodedPassword = passwordEncoder.encode(signupRequest.password());
-
 		MemberRole memberRole = MemberRole.of(signupRequest.memberRole());
 
 		Member newMember = Member.builder()
