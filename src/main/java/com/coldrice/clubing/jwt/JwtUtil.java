@@ -84,6 +84,8 @@ public class JwtUtil {
 
 			Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
 			cookie.setPath("/");
+			// cookie.setHttpOnly(true);
+			// cookie.setSecure(true); // HTTPS 환경에서만 전송 (운영 시 활성화)
 
 			// Response 객체에 Cookie 추가
 			res.addCookie(cookie);
