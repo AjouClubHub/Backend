@@ -1,10 +1,13 @@
 package com.coldrice.clubing.domain.club.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
+import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
 import com.coldrice.clubing.domain.club.entity.ClubType;
@@ -42,5 +45,10 @@ public class ClubService {
 
 		Club savedClub = clubRepository.save(club);
 		return new ClubRegisterResponse(savedClub.getId(), savedClub.getName(), "PENDING");
+	}
+
+	public List<ClubResponse> getAllClubs() {
+		List<Club> clubs = clubRepository.findAllByOrderByStatusAsc();
+		return clubs.stream().map(ClubResponse::from).toList();
 	}
 }

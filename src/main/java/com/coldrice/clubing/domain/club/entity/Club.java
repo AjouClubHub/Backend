@@ -1,5 +1,6 @@
 package com.coldrice.clubing.domain.club.entity;
 
+import com.coldrice.clubing.domain.common.Timestamped;
 import com.coldrice.clubing.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Club {
+public class Club extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

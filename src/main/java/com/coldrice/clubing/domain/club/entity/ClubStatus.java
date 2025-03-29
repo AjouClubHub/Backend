@@ -3,7 +3,7 @@ package com.coldrice.clubing.domain.club.entity;
 import java.util.Arrays;
 
 public enum ClubStatus {
-	OPEN, CLOSED, PENDING;
+	PENDING, APPROVED, REJECTED, DELETED;
 
 	public static ClubStatus of(String role) {
 		return Arrays.stream(ClubStatus.values())
