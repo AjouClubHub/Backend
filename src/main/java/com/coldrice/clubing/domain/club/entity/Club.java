@@ -49,8 +49,16 @@ public class Club extends Timestamped {
 
 	private String keyword;
 
+	// 등록 요청 거절 사유 (관리자가 요청 거절시)
+	// 또는 ENUM으로 거절 사유 항목을 설정 할 수도 있음.
+	private String rejectionReason;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "manager_id")
 	private Member manager; // member : club  == 1:N
 
+	public void updateStaus(ClubStatus status, String rejectionReason) {
+		this.status = status;
+		this.rejectionReason = rejectionReason;
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coldrice.clubing.domain.club.dto.ClubApprovalRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
@@ -56,5 +57,16 @@ public class ClubService {
 	public List<ClubResponse> getApprovedClubs() {
 		List<Club> clubs = clubRepository.findAllByStatus(ClubStatus.APPROVED);
 		return clubs.stream().map(ClubResponse::from).toList();
+	}
+
+	public void updateClubApproval(Long clubId, ClubApprovalRequest request) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		if(request.status() == ClubStatus.REJECTED && request.rejectionReason() == null) {
+			throw new IllegalArgumentException("거절 사유는 필수입니다.");
+		}
+
+		club.updateStaus(request.status(), request.rejectionReason());
 	}
 }
