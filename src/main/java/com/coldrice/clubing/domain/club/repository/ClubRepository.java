@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.coldrice.clubing.domain.club.entity.Club;
+import com.coldrice.clubing.domain.club.entity.ClubStatus;
 
 public interface ClubRepository extends JpaRepository<Club, Long> {
 	boolean existsByName(String name);
@@ -14,5 +15,7 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
 
 	List<Club> findAllByOrderByStatusAsc();
 
-	// 추가 고려 사항 : 해당 사용자가 관리하는 클럽 조회, 동아리/소학회 필터링 조회, 키워드 기반 검색
+	List<Club> findAllByStatus(ClubStatus clubStatus);
+
+	// 추가 고려 사항 : 동아리/소학회 필터링 조회, 키워드 기반 검색
 }

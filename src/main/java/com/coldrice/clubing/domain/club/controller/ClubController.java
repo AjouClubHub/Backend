@@ -41,4 +41,10 @@ public class ClubController {
 		List<ClubResponse> response = clubService.getAllClubs();
 		return ResponseBodyDto.success("전체 클럽 목록 조회 성공", response);
 	}
+
+	@GetMapping("/api/clubs")
+	public ResponseBodyDto<List<ClubResponse>> getApprovedClubs() {
+		List<ClubResponse> response = clubService.getApprovedClubs();
+		return ResponseBodyDto.success("승인된 클럽 목록 조회 성공", response);
+	}
 }

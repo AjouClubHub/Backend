@@ -10,6 +10,7 @@ import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
+import com.coldrice.clubing.domain.club.entity.ClubStatus;
 import com.coldrice.clubing.domain.club.entity.ClubType;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
@@ -49,6 +50,11 @@ public class ClubService {
 
 	public List<ClubResponse> getAllClubs() {
 		List<Club> clubs = clubRepository.findAllByOrderByStatusAsc();
+		return clubs.stream().map(ClubResponse::from).toList();
+	}
+
+	public List<ClubResponse> getApprovedClubs() {
+		List<Club> clubs = clubRepository.findAllByStatus(ClubStatus.APPROVED);
 		return clubs.stream().map(ClubResponse::from).toList();
 	}
 }
