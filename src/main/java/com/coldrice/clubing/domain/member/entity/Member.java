@@ -39,4 +39,18 @@ public class Member extends Timestamped {
 
 	@Enumerated(EnumType.STRING)
 	private MemberRole memberRole;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Member member = (Member) o;
+		return id != null && id.equals(member.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
+
 }
