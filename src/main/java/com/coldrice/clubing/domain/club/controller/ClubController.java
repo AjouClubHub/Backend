@@ -19,6 +19,8 @@ import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.service.ClubService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,7 @@ public class ClubController {
 	private final ClubService clubService;
 
 	@Secured("ROLE_MANAGER")
+	@Operation(summary = "클럽 등록 요청", description = "클럽 관리자가 새로운 클럽 등록을 요청합니다.")
 	@PostMapping("/api/clubs/register")
 	public ResponseBodyDto<ClubRegisterResponse> registerClub(
 		@RequestBody @Valid ClubRegisterRequest request,
@@ -39,12 +42,14 @@ public class ClubController {
 	}
 
 	@Secured("ROLE_ADMIN")
+	@Operation(summary = "전체 클럽 목록 조회 (관리자)", description = "관리자가 모든 클럽 목록을 status 기준 정렬로 조회합니다.")
 	@GetMapping("/api/admin/clubs")
 	public ResponseBodyDto<List<ClubResponse>> getAllClubs() {
 		List<ClubResponse> response = clubService.getAllClubs();
 		return ResponseBodyDto.success("전체 클럽 목록 조회 성공", response);
 	}
 
+	@Operation(summary = "승인된 클럽 목록 조회", description = "일반 사용자가 승인된 클럽 목록만 조회할 수 있습니다.")
 	@GetMapping("/api/clubs")
 	public ResponseBodyDto<List<ClubResponse>> getApprovedClubs() {
 		List<ClubResponse> response = clubService.getApprovedClubs();
@@ -53,9 +58,10 @@ public class ClubController {
 
 	// 클럽 등록 신청 승인/거절
 	@Secured("ROLE_ADMIN")
+	@Operation(summary = "클럽 등록 승인/거절 처리", description = "관리자가 특정 클럽 등록 요청을 승인 또는 거절합니다.")
 	@PatchMapping("/api/admin/clubs/{clubId}/approval")
 	public ResponseBodyDto<Void> updateClubApprovalStatus(
-		@PathVariable Long clubId,
+		@Parameter(description = "승인/거절할 클럽 ID") @PathVariable Long clubId,
 		@RequestBody ClubApprovalRequest request
 	) {
 		clubService.updateClubApproval(clubId, request);

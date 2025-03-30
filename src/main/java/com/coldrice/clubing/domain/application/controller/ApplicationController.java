@@ -19,6 +19,8 @@ import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest
 import com.coldrice.clubing.domain.application.service.ApplicationService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -28,9 +30,10 @@ public class ApplicationController {
 
 	private final ApplicationService applicationService;
 
+	@Operation(summary = "클럽 가입 신청", description = "일반 사용자가 클럽 가입을 신청합니다.")
 	@PostMapping("/api/clubs/{clubId}/applications")
 	public ResponseBodyDto<ApplicationResponse> applyToClub(
-		@PathVariable Long clubId,
+		@Parameter(description = "가입 신청할 클럽의 ID") @PathVariable Long clubId,
 		@Valid @RequestBody ApplicationRequest request,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
@@ -40,9 +43,10 @@ public class ApplicationController {
 
 	// 클럽 가입 신청 목록 조회
 	@Secured("ROLE_MANAGER")
+	@Operation(summary = "클럽 가입 신청 목록 조회", description = "클럽 관리자가 자신의 클럽에 대한 가입 신청 목록을 조회합니다.")
 	@GetMapping("/api/clubs/{clubId}/applications")
 	public ResponseBodyDto<List<ApplicationResponse>> getApplications(
-		@PathVariable Long clubId,
+		@Parameter(description = "가입 신청 목록을 조회할 클럽 ID") @PathVariable Long clubId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		List<ApplicationResponse> response = applicationService.getAllApplications(clubId);
@@ -50,10 +54,11 @@ public class ApplicationController {
 	}
 
 	@Secured("ROLE_MANAGER")
+	@Operation(summary = "가입 신청 승인/거절", description = "클럽 관리자가 특정 가입 신청을 승인 또는 거절합니다.")
 	@PutMapping("/api/clubs/{clubId}/applications/{applicationId}/approval")
 	public ResponseBodyDto<String> approveOrRejectApplication(
-		@PathVariable Long clubId,
-		@PathVariable Long applicationId,
+		@Parameter(description = "가입 신청이 들어온 클럽의 ID") @PathVariable Long clubId,
+		@Parameter(description = "처리할 가입 신청 ID") @PathVariable Long applicationId,
 		@RequestBody @Valid ClubApplicationDecisonRequest request,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
