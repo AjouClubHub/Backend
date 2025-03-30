@@ -59,6 +59,7 @@ public class ClubService {
 		return clubs.stream().map(ClubResponse::from).toList();
 	}
 
+	@Transactional
 	public void updateClubApproval(Long clubId, ClubApprovalRequest request) {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
@@ -67,6 +68,6 @@ public class ClubService {
 			throw new IllegalArgumentException("거절 사유는 필수입니다.");
 		}
 
-		club.updateStaus(request.status(), request.rejectionReason());
+		club.updateStatus(request.status(), request.rejectionReason());
 	}
 }

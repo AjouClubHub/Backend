@@ -36,9 +36,11 @@ public class Club extends Timestamped {
 
 	private String description;
 
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	private ClubStatus status = ClubStatus.PENDING;
 
+	@Enumerated(EnumType.STRING)
 	private ClubCategory category;
 
 	private String contactInfo; // 전화번호
@@ -57,7 +59,7 @@ public class Club extends Timestamped {
 	@JoinColumn(name = "manager_id")
 	private Member manager; // member : club  == 1:N
 
-	public void updateStaus(ClubStatus status, String rejectionReason) {
+	public void updateStatus(ClubStatus status, String rejectionReason) {
 		this.status = status;
 		this.rejectionReason = rejectionReason;
 	}
