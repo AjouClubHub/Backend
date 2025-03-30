@@ -7,12 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
 import com.coldrice.clubing.domain.application.dto.ApplicationResponse;
+import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest;
 import com.coldrice.clubing.domain.application.entity.Application;
 import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
 import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -24,6 +27,7 @@ public class ApplicationService {
 
 	private final ClubRepository clubRepository;
 	private final ApplicationRepository applicationRepository;
+	private final MembershipRepository membershipRepository;
 
 	@Transactional
 	public ApplicationResponse apply(Long clubId, ApplicationRequest request, Member member) {
@@ -58,5 +62,47 @@ public class ApplicationService {
 		List<Application> applications = applicationRepository.findByClubOrderByStatusAsc(club);
 		return applications.stream()
 			.map(ApplicationResponse::from).toList();
+	}
+
+	// 가입 승인/거절
+	@Transactional
+	public void decideApplication(Long clubId, Long applicationId, ClubApplicationDecisonRequest request,
+		Member manager) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		// 본인이 관리하는 클럽인지 검증
+		club.validateManager(manager);
+
+		Application application = applicationRepository.findById(applicationId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
+
+		// 신청이 해당 클럽에 대한 것인지 확인
+		if (!application.getClub().equals(club)) {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST);
+		}
+
+		ApplicationStatus requestedStatus = request.status();
+
+		if (requestedStatus == ApplicationStatus.REJECTED) {
+			String reason = request.rejectionReason();
+			if (reason == null || reason.isBlank()) {
+				throw new GlobalException(ExceptionCode.INVALID_REJECTED_REASON);
+			}
+			application.reject(reason); // 상태 + 사유 설정
+		} else if (requestedStatus == ApplicationStatus.APPROVED) {
+			application.approve(); // 상태만 변경
+
+			// 중복된 멤버쉽 방지
+			if(!membershipRepository.existsByMemberAndClub(application.getMember(), club)) {
+				Membership membership = Membership.builder()
+					.member(application.getMember())
+					.club(club)
+					.build();
+				membershipRepository.save(membership);
+			}
+		} else {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 에외 케이스 처리
+		}
 	}
 }

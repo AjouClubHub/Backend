@@ -4,15 +4,18 @@ import java.util.List;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
 import com.coldrice.clubing.domain.application.dto.ApplicationResponse;
+import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest;
 import com.coldrice.clubing.domain.application.service.ApplicationService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -44,5 +47,17 @@ public class ApplicationController {
 	) {
 		List<ApplicationResponse> response = applicationService.getAllApplications(clubId);
 		return ResponseBodyDto.success("클럽 가입 신청 목록 조회 성공", response);
+	}
+
+	@Secured("ROLE_MANAGER")
+	@PutMapping("/api/clubs/{clubId}/applications/{applicationId}/approval")
+	public ResponseBodyDto<String> approveOrRejectApplication(
+		@PathVariable Long clubId,
+		@PathVariable Long applicationId,
+		@RequestBody @Valid ClubApplicationDecisonRequest request,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		applicationService.decideApplication(clubId, applicationId, request, userDetails.getMember());
+		return ResponseBodyDto.success("가입 승인/거절이 완료되었습니다");
 	}
 }

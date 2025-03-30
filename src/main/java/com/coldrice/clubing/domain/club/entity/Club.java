@@ -2,6 +2,8 @@ package com.coldrice.clubing.domain.club.entity;
 
 import com.coldrice.clubing.domain.common.Timestamped;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.exception.customException.GlobalException;
+import com.coldrice.clubing.exception.enums.ExceptionCode;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,5 +64,13 @@ public class Club extends Timestamped {
 	public void updateStatus(ClubStatus status, String rejectionReason) {
 		this.status = status;
 		this.rejectionReason = rejectionReason;
+	}
+
+	public void validateManager(Member member) {
+		System.out.println("club.getManager() = " + this.manager.getId());
+		System.out.println("requesting manager = " + manager.getId());
+		if (!this.getManager().equals(member)) {
+			throw new GlobalException(ExceptionCode.UNAUTHORIZED_MANAGER);
+		}
 	}
 }

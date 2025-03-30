@@ -54,4 +54,14 @@ public class Application extends Timestamped {
 	private String phoneNumber;
 
 	private String motivation;
+
+	public void reject(String reason) {
+		this.status = ApplicationStatus.REJECTED;
+		this.rejectionReason = reason;
+	}
+
+	public void approve() {
+		this.status = ApplicationStatus.APPROVED;
+		this.rejectionReason = null; // 기존 거절 사유가 있을 수 있으므로 초기화
+	}
 }

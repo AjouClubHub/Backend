@@ -13,6 +13,7 @@ public enum ExceptionCode {
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 	NO_PERMISSION(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 	LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
+	UNAUTHORIZED_MANAGER(HttpStatus.UNAUTHORIZED, "유효하지 않은 클럽 관리자입니다"),
 
 	// 기타
 	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
@@ -28,7 +29,10 @@ public enum ExceptionCode {
 	ALREADY_REGISTERED_CLUB(HttpStatus.BAD_REQUEST, "이미 등록된 클럽입니다."),
 
 	// Application
-	DUPLICATE_APPLICATION(HttpStatus.BAD_REQUEST, "이미 해당 클럽에 가입 신청을 하셨습니다.");
+	DUPLICATE_APPLICATION(HttpStatus.BAD_REQUEST, "이미 해당 클럽에 가입 신청을 하셨습니다."),
+	NOT_FOUND_APPLICATION(HttpStatus.NOT_FOUND, "해당 가입 신청을 찾을 수 없습니다."),
+	INVALID_REJECTED_REASON(HttpStatus.BAD_REQUEST, "가입 신청 거절시 거절 사유는 필수입니다." );
+
 
 	private final HttpStatus httpStatus;
 	private final String message;
