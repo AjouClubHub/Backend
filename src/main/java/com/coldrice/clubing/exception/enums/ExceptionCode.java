@@ -25,7 +25,10 @@ public enum ExceptionCode {
 
 	// Club
 	NOT_FOUND_CLUB(HttpStatus.NOT_FOUND, "해당 클럽을 찾을 수 없습니다."),
-	ALREADY_REGISTERED_CLUB(HttpStatus.BAD_REQUEST, "이미 등록된 클럽입니다.");
+	ALREADY_REGISTERED_CLUB(HttpStatus.BAD_REQUEST, "이미 등록된 클럽입니다."),
+
+	// Application
+	DUPLICATE_APPLICATION(HttpStatus.BAD_REQUEST, "이미 해당 클럽에 가입 신청을 하셨습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
