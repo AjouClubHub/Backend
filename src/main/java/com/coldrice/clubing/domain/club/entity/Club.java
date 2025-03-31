@@ -1,10 +1,16 @@
 package com.coldrice.clubing.domain.club.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.coldrice.clubing.domain.common.Timestamped;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -47,7 +53,11 @@ public class Club extends Timestamped {
 
 	private String contactInfo; // 전화번호
 
-	private String joinRequirement;
+	@ElementCollection(fetch = FetchType.LAZY)
+	@Enumerated(EnumType.STRING)
+	@CollectionTable(name = "club_requirement_majors", joinColumns = @JoinColumn(name = "club_id"))
+	@Column(name = "requirement_major")
+	private List<RequiredMajor> requiredMajors = new ArrayList<>();
 
 	private String location;
 

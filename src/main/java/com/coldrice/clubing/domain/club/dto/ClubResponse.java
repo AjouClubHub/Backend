@@ -6,6 +6,7 @@ import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
 import com.coldrice.clubing.domain.club.entity.ClubStatus;
 import com.coldrice.clubing.domain.club.entity.ClubType;
+import com.coldrice.clubing.domain.club.entity.RequiredMajor;
 
 public record ClubResponse(
 	Long id,
@@ -16,7 +17,7 @@ public record ClubResponse(
 	String contactInfo,
 	String location,
 	String keyword,
-	String joinRequirement,
+	java.util.List<RequiredMajor> joinRequirement,
 	ClubStatus status,
 	LocalDateTime createdAt,
 	LocalDateTime updatedAt
@@ -32,7 +33,7 @@ public record ClubResponse(
 			club.getContactInfo(),
 			club.getLocation(),
 			club.getKeyword(),
-			club.getJoinRequirement(),
+			club.getRequiredMajors(),
 			club.getStatus(),
 			club.getCreatedAt(),
 			club.getUpdatedAt()

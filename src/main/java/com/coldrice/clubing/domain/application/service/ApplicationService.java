@@ -12,6 +12,7 @@ import com.coldrice.clubing.domain.application.entity.Application;
 import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
 import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
+import com.coldrice.clubing.domain.club.entity.RequiredMajor;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
@@ -37,6 +38,15 @@ public class ApplicationService {
 		// 중복 신청 체크
 		if (applicationRepository.existsByClubAndMember(club, member)) {
 			throw new GlobalException(ExceptionCode.DUPLICATE_APPLICATION);
+		}
+
+		// 클럽의 전공 제한 조건 확인
+		List<RequiredMajor> requiredMajors = club.getRequiredMajors();
+		if (!requiredMajors.isEmpty()) {
+			RequiredMajor applicantMajor = RequiredMajor.valueOf(request.major());
+			if (!requiredMajors.contains(applicantMajor)) {
+				throw new GlobalException(ExceptionCode.MAJOR_REQUIREMENT_NOT_MET);
+			}
 		}
 
 		Application application = Application.builder()

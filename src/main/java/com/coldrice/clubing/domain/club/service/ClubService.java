@@ -41,7 +41,7 @@ public class ClubService {
 			.contactInfo(request.contactInfo())
 			.location(request.location())
 			.keyword(request.keyword())
-			.joinRequirement(request.joinRequirement())
+			.requiredMajors(request.requiredMajors())
 			.manager(manager)
 			.build();
 
