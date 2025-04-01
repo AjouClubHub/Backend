@@ -70,4 +70,11 @@ public class ClubService {
 
 		club.updateStatus(request.status(), request.rejectionReason());
 	}
+
+	public ClubResponse getClubById(Long clubId) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		return ClubResponse.from(club);
+	}
 }

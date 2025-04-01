@@ -67,4 +67,13 @@ public class ClubController {
 		clubService.updateClubApproval(clubId, request);
 		return ResponseBodyDto.success("클럽 상태 업데이트 성공");
 	}
+
+	@Operation(summary = "클럽 단건 조회", description = "클럽 ID로 단일 클럽 정보를 조회합니다.")
+	@GetMapping("/api/clubs/{clubId}")
+	public ResponseBodyDto<ClubResponse> getClub(
+		@Parameter(description = "클럽 ID", example = "1") @PathVariable Long clubId
+	) {
+		ClubResponse response = clubService.getClubById(clubId);
+		return ResponseBodyDto.success("클럽 단건 조회 성공", response);
+	}
 }
