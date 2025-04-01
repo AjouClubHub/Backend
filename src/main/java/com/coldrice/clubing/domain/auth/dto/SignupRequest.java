@@ -10,7 +10,7 @@ public record SignupRequest(
 	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@ajou\\.ac\\.kr$", message = "ajou.ac.kr 이메일만 허용됩니다.")
 	String email,
 	@NotBlank String password,
-	String department,
+	String major,
 	@NotBlank String memberRole
 ) {
 }

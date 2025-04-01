@@ -44,7 +44,7 @@ public class AuthService {
 			.name(signupRequest.name())
 			.email(signupRequest.email())
 			.password(encodedPassword)
-			.department(signupRequest.department())
+			.department(signupRequest.major())
 			.memberRole(memberRole)
 			.build();
 
