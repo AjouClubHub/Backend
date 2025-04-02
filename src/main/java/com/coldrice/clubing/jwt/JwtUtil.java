@@ -84,9 +84,9 @@ public class JwtUtil {
 
 			Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
 			cookie.setPath("/");
-			cookie.setHttpOnly(true); // JS에서 접근 못하게
-			cookie.setSecure(false); // HTTPS 환경에서만 전송 (운영 시 활성화)
-			cookie.setMaxAge((int)(TOKEN_TIME / 1000));
+			cookie.setHttpOnly(false); // JS에서 접근 가능
+			cookie.setSecure(false); // ture : HTTPS 환경에서만 전송 (false: 운영 시 활성화)
+			cookie.setMaxAge((int)(TOKEN_TIME / 1000)); // 토큰 만료 시간
 
 			// Response 객체에 Cookie 추가
 			// res.addCookie(cookie);
