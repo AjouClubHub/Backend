@@ -86,14 +86,14 @@ public class JwtUtil {
 			cookie.setPath("/");
 			cookie.setHttpOnly(false); // JS에서 접근 가능
 			cookie.setSecure(false); // ture : HTTPS 환경에서만 전송 (false: 운영 시 활성화)
-			cookie.setMaxAge((int)(TOKEN_TIME / 1000)); // 토큰 만료 시간
+			// cookie.setMaxAge((int)(TOKEN_TIME / 1000)); // 토큰 만료 시간
 
 			// Response 객체에 Cookie 추가
-			// res.addCookie(cookie);
+			res.addCookie(cookie);
 			// 직접 헤더 설정 시 SameSite=Lax로 설정 (http 환경에서 사용 가능)
-			res.setHeader("Set-Cookie",
-				String.format("Authorization=%s; Path=/; Max-Age=%d; SameSite=Lax",
-					token, (int)(TOKEN_TIME / 1000)));
+			// res.setHeader("Set-Cookie",
+			// 	String.format("Authorization=%s; Path=/; Max-Age=%d; SameSite=Lax",
+			// 		token, (int)(TOKEN_TIME / 1000)));
 
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage());
