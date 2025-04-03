@@ -76,44 +76,16 @@ public class JwtUtil {
 			.getBody();
 	}
 
-	//생성된 JWT 를 Cookie 에 저장
-	public void addJwtToCookie(String token, HttpServletResponse res) {
-		try {
-			token = URLEncoder.encode(token, "utf-8")
-				.replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
-
-			Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
-			cookie.setPath("/");
-			cookie.setHttpOnly(false); // JS에서 접근 가능
-			cookie.setSecure(false); // ture : HTTPS 환경에서만 전송 (false: 운영 시 활성화)
-			// cookie.setMaxAge((int)(TOKEN_TIME / 1000)); // 토큰 만료 시간
-
-			// Response 객체에 Cookie 추가
-			res.addCookie(cookie);
-			// 직접 헤더 설정 시 SameSite=Lax로 설정 (http 환경에서 사용 가능)
-			// res.setHeader("Set-Cookie",
-			// 	String.format("Authorization=%s; Path=/; Max-Age=%d; SameSite=Lax",
-			// 		token, (int)(TOKEN_TIME / 1000)));
-
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
-		}
+	// 응답 헤더에 토큰 추가
+	public void addJwtToHeader(String token, HttpServletResponse res) {
+		res.setHeader(AUTHORIZATION_HEADER, token);
 	}
 
-	// HttpServletRequest 에서 Cookie Value : JWT 가져오기
+	// 요청 헤더에서 토큰 추출
 	public String getTokenFromRequest(HttpServletRequest req) {
-		Cookie[] cookies = req.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
-					try {
-						return URLDecoder.decode(cookie.getValue(),
-							"UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-					} catch (UnsupportedEncodingException e) {
-						return null;
-					}
-				}
-			}
+		String bearerToken = req.getHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+			return substringToken(bearerToken);
 		}
 		return null;
 	}
