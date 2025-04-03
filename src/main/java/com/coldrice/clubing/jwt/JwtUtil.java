@@ -89,11 +89,11 @@ public class JwtUtil {
 			cookie.setMaxAge((int)(TOKEN_TIME / 1000)); // 토큰 만료 시간
 
 			// Response 객체에 Cookie 추가
-			// res.addCookie(cookie);
+			res.addCookie(cookie);
 			// 직접 헤더 설정 (SameSite=None 명시)
-			res.setHeader("Set-Cookie",
-				String.format("Authorization=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
-					token, (int)(TOKEN_TIME / 1000)));
+			// res.setHeader("Set-Cookie",
+			// 	String.format("Authorization=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
+			// 		token, (int)(TOKEN_TIME / 1000)));
 
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage());
