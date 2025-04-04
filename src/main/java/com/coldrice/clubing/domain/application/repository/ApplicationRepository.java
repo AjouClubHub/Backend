@@ -12,4 +12,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	boolean existsByClubAndMember(Club club, Member member);
 
 	List<Application> findByClubOrderByStatusAsc(Club club);
+
+	List<Application> findByMemberOrderByCreatedAtDesc(Member member);
 }

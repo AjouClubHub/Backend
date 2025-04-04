@@ -65,4 +65,15 @@ public class ApplicationController {
 		applicationService.decideApplication(clubId, applicationId, request, userDetails.getMember());
 		return ResponseBodyDto.success("가입 승인/거절이 완료되었습니다");
 	}
+
+	@Secured("ROLE_MEMBER")
+	@Operation(summary = "내 클럽 가입 신청 현황 조회", description = "사용자가 본인이 신청한 클럽 가입 상태를 확인합니다,")
+	@GetMapping("/api/my/applications")
+	public ResponseBodyDto<List<ApplicationResponse>> getMyApplication(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		List<ApplicationResponse> response = applicationService.getMyApplications(userDetails.getMember());
+		return ResponseBodyDto.success("가입 신청 현황 조회 성공", response);
+	}
+
 }

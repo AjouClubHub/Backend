@@ -35,7 +35,7 @@ public class Member extends Timestamped {
 	@Column(nullable = false)
 	private String password;
 
-	private String department;
+	private String major;
 
 	@Enumerated(EnumType.STRING)
 	private MemberRole memberRole;

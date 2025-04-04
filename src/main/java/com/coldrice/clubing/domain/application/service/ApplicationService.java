@@ -43,7 +43,7 @@ public class ApplicationService {
 		// 클럽의 전공 제한 조건 확인
 		List<RequiredMajor> requiredMajors = club.getRequiredMajors();
 		if (!requiredMajors.isEmpty()) {
-			RequiredMajor applicantMajor = RequiredMajor.valueOf(request.major());
+			RequiredMajor applicantMajor = RequiredMajor.valueOf(member.getMajor());
 			if (!requiredMajors.contains(applicantMajor)) {
 				throw new GlobalException(ExceptionCode.MAJOR_REQUIREMENT_NOT_MET);
 			}
@@ -55,7 +55,7 @@ public class ApplicationService {
 			.status(ApplicationStatus.PENDING)
 			.birthDate(request.birthDate())
 			.studentId(request.studentId())
-			.major(request.major())
+			.major(member.getMajor())
 			.gender(request.gender())
 			.phoneNumber(request.phoneNumber())
 			.motivation(request.motivation())
@@ -104,7 +104,7 @@ public class ApplicationService {
 			application.approve(); // 상태만 변경
 
 			// 중복된 멤버쉽 방지
-			if(!membershipRepository.existsByMemberAndClub(application.getMember(), club)) {
+			if (!membershipRepository.existsByMemberAndClub(application.getMember(), club)) {
 				Membership membership = Membership.builder()
 					.member(application.getMember())
 					.club(club)
@@ -114,5 +114,12 @@ public class ApplicationService {
 		} else {
 			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 에외 케이스 처리
 		}
+	}
+
+	public List<ApplicationResponse> getMyApplications(Member member) {
+		List<Application> applications = applicationRepository.findByMemberOrderByCreatedAtDesc(member); // 생성 일자로 내림차순
+		return applications.stream()
+			.map(ApplicationResponse::from)
+			.toList();
 	}
 }
