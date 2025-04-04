@@ -7,6 +7,8 @@ import com.coldrice.clubing.domain.common.Timestamped;
 import com.coldrice.clubing.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +41,7 @@ public class Membership extends Timestamped {
 	@JoinColumn(name = "club_id")
 	private Club club;
 
+	@Enumerated(EnumType.STRING)
 	private MembershipStatus status;
 
 	@Lob

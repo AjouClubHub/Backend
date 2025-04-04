@@ -1,5 +1,6 @@
 package com.coldrice.clubing.domain.application.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.coldrice.clubing.domain.club.entity.RequiredMajor;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
@@ -108,6 +110,9 @@ public class ApplicationService {
 				Membership membership = Membership.builder()
 					.member(application.getMember())
 					.club(club)
+					.status(MembershipStatus.ACTIVE)
+					.joinReason(application.getMotivation())
+					.joinedAt(LocalDateTime.now())
 					.build();
 				membershipRepository.save(membership);
 			}

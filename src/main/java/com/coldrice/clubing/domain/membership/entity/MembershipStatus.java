@@ -3,7 +3,7 @@ package com.coldrice.clubing.domain.membership.entity;
 import java.util.Arrays;
 
 public enum MembershipStatus {
-	PENDING, APPROVED, REJECTED, WITHDRAWN, EXPELLED;
+	ACTIVE, WITHDRAWN, EXPELLED; // 클럽 활동 중, 자발적 탈퇴, 강제 추방
 
 	public static MembershipStatus of(String role) {
 		return Arrays.stream(MembershipStatus.values())
