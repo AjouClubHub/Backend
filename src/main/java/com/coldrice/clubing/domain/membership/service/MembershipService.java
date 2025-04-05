@@ -10,6 +10,7 @@ import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
@@ -48,5 +49,17 @@ public class MembershipService {
 		}
 
 		membership.withdraw(reason);
+	}
+
+	public List<ClubMemberResponse> getClubMembers(Long clubId, Member member) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		club.validateManager(member);
+
+		return membershipRepository.findByClubIdAndStatus(clubId, MembershipStatus.ACTIVE)
+			.stream()
+			.map(ClubMemberResponse::from)
+			.toList();
 	}
 }

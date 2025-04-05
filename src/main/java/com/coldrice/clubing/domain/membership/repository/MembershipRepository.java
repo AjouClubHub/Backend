@@ -1,5 +1,6 @@
 package com.coldrice.clubing.domain.membership.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
 	boolean existsByMemberAndClub(Member member, Club club);
@@ -16,4 +18,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 	List<Membership> findByMemberAndLeftAtIsNull(Member member);
 
 	Optional<Membership> findByMemberIdAndClubId(Long id, Long clubId);
+
+	List<Membership> findByClubIdAndStatus(Long clubId, MembershipStatus membershipStatus);
 }

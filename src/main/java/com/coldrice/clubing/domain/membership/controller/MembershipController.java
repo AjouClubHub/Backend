@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
+import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.ClubWithdrawRequest;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
@@ -49,5 +50,16 @@ public class MembershipController {
 	) {
 		membershipService.withdrawClub(clubId, userDetails.getMember(), request.leavenReason());
 		return ResponseBodyDto.success("클럽 탈퇴가 완료되었습니다.");
+	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "클럽 회원 목록 조회", description = "클럽 관리자가 자신의 클럽 회원 목록을 조회합니다.(ACTIVE 상태의 회원만)")
+	@GetMapping("/api/clubs/{clubId}/members")
+	public ResponseBodyDto<List<ClubMemberResponse>> getClubMembers(
+		@PathVariable Long clubId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		List<ClubMemberResponse> response = membershipService.getClubMembers(clubId,userDetails.getMember());
+		return ResponseBodyDto.success("클럽 회원 목록 조회 성공", response);
 	}
 }
