@@ -43,7 +43,8 @@ public enum ExceptionCode {
 
 	// Recruitment
 	INVALID_RECRUITMENT_DATE(HttpStatus.BAD_REQUEST, "모집 시작일과 종료일을 다시 확인해주세요."),
-	DUPLICATE_RECRUITMENT(HttpStatus.FORBIDDEN, "해당 클럽에 대한 모집 공고는 이미 존재합니다." );
+	DUPLICATE_RECRUITMENT(HttpStatus.FORBIDDEN, "해당 클럽에 대한 모집 공고는 이미 존재합니다." ),
+	NOT_FOUND_RECRUITMENT(HttpStatus.NOT_FOUND, "해당 모집 공고를 찾을 수 없습니다.");
 
 
 	private final HttpStatus httpStatus;

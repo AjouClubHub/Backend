@@ -1,7 +1,5 @@
 package com.coldrice.clubing.domain.recruitment.service;
 
-import java.time.LocalDate;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +27,7 @@ public class RecruitmentService {
 	@Transactional
 	public RecruitmentResponse registerRecruitment(Long clubId, @Valid RecruitmentRequest request, Member member) {
 		Club club = clubRepository.findById(clubId)
-			.orElseThrow(()-> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
 		club.validateManager(member);
 
@@ -48,6 +46,13 @@ public class RecruitmentService {
 			.build();
 
 		recruitmentRepository.save(recruitment);
+
+		return RecruitmentResponse.from(recruitment);
+	}
+
+	public RecruitmentResponse getRecruitment(Long clubId) {
+		Recruitment recruitment = recruitmentRepository.findByClubId(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_RECRUITMENT));
 
 		return RecruitmentResponse.from(recruitment);
 	}

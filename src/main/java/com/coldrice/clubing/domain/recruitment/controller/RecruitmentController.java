@@ -3,6 +3,7 @@ package com.coldrice.clubing.domain.recruitment.controller;
 import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,5 +35,12 @@ public class RecruitmentController {
 	) {
 		RecruitmentResponse response = recruitmentService.registerRecruitment(clubId, request, userDetails.getMember());
 		return ResponseBodyDto.success("모집 공고 등록 완료", response);
+	}
+
+	@Operation(summary = "모집 공고 단건 조회", description = "클럽의 모집 공고를 조회합니다.")
+	@GetMapping("/api/clubs/{clubId}/recruitment")
+	public ResponseBodyDto<RecruitmentResponse> getRecruitment(@PathVariable Long clubId) {
+		RecruitmentResponse response = recruitmentService.getRecruitment(clubId);
+		return ResponseBodyDto.success("모집 공고 조회 성공", response);
 	}
 }
