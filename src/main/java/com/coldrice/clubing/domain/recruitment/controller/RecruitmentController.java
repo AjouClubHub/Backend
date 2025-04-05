@@ -6,6 +6,7 @@ import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentRequest;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentResponse;
+import com.coldrice.clubing.domain.recruitment.dto.RecruitmentUpdateRequest;
 import com.coldrice.clubing.domain.recruitment.service.RecruitmentService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -52,4 +54,17 @@ public class RecruitmentController {
 		List<RecruitmentResponse> response = recruitmentService.getAllRecruitments();
 		return ResponseBodyDto.success("전체 모집 공고 조회 성공", response);
 	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "모집 공고 수정", description = "클럽 관리자가 모집 공고 내용을 수정합니다.")
+	@PatchMapping("/api/clubs/{clubId}/recruitment")
+	public ResponseBodyDto<RecruitmentResponse> updateRecruitment(
+		@PathVariable Long clubId,
+		@Valid @RequestBody RecruitmentUpdateRequest request,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		RecruitmentResponse response = recruitmentService.updateRecruitment(clubId, request, userDetails.getMember());
+		return ResponseBodyDto.success("모집 공고 수정 완료", response);
+	}
+
 }

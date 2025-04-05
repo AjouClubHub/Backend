@@ -47,4 +47,11 @@ public class Recruitment extends Timestamped {
 	private RecruitmentStatus status;
 
 	private String title;
+
+	public void update(String title, String requirements, LocalDate startDate, LocalDate endDate) {
+		this.title = title;
+		this.requirements = requirements;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
 }

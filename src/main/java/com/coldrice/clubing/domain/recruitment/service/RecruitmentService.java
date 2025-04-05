@@ -10,6 +10,7 @@ import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentRequest;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentResponse;
+import com.coldrice.clubing.domain.recruitment.dto.RecruitmentUpdateRequest;
 import com.coldrice.clubing.domain.recruitment.entity.Recruitment;
 import com.coldrice.clubing.domain.recruitment.entity.RecruitmentStatus;
 import com.coldrice.clubing.domain.recruitment.repository.RecruitmentRepository;
@@ -64,5 +65,21 @@ public class RecruitmentService {
 		return recruitments.stream()
 			.map(RecruitmentResponse::from)
 			.toList();
+	}
+
+	public RecruitmentResponse updateRecruitment(Long clubId, @Valid RecruitmentUpdateRequest request, Member member) {
+		Recruitment recruitment = recruitmentRepository.findByClubId(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_RECRUITMENT));
+
+		recruitment.getClub().validateManager(member);
+
+		recruitment.update(
+			request.title(),
+			request.requirements(),
+			request.startDate(),
+			request.endDate()
+		);
+
+		return RecruitmentResponse.from(recruitment);
 	}
 }
