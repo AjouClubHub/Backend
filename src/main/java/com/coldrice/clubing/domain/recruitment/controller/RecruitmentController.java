@@ -1,5 +1,7 @@
 package com.coldrice.clubing.domain.recruitment.controller;
 
+import java.util.List;
+
 import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,5 +44,12 @@ public class RecruitmentController {
 	public ResponseBodyDto<RecruitmentResponse> getRecruitment(@PathVariable Long clubId) {
 		RecruitmentResponse response = recruitmentService.getRecruitment(clubId);
 		return ResponseBodyDto.success("모집 공고 조회 성공", response);
+	}
+
+	@Operation(summary = "전체 모집 공고 조회", description = "현재 등록된 모든 모집 공고를 조회합니다.")
+	@GetMapping("/api/recruitments")
+	public ResponseBodyDto<List<RecruitmentResponse>> getAllRecruitments() {
+		List<RecruitmentResponse> response = recruitmentService.getAllRecruitments();
+		return ResponseBodyDto.success("전체 모집 공고 조회 성공", response);
 	}
 }

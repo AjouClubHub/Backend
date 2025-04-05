@@ -1,5 +1,7 @@
 package com.coldrice.clubing.domain.recruitment.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,5 +57,12 @@ public class RecruitmentService {
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_RECRUITMENT));
 
 		return RecruitmentResponse.from(recruitment);
+	}
+
+	public List<RecruitmentResponse> getAllRecruitments() {
+		List<Recruitment> recruitments = recruitmentRepository.findAll();
+		return recruitments.stream()
+			.map(RecruitmentResponse::from)
+			.toList();
 	}
 }

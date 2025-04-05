@@ -6,6 +6,7 @@ import com.coldrice.clubing.domain.recruitment.entity.Recruitment;
 
 public record RecruitmentResponse(
 	Long id,
+	String clubName,
 	String title,
 	String requirements,
 	LocalDate startDate,
@@ -14,6 +15,7 @@ public record RecruitmentResponse(
 	public static RecruitmentResponse from(Recruitment recruitment) {
 		return new RecruitmentResponse(
 			recruitment.getId(),
+			recruitment.getClub().getName(),
 			recruitment.getTitle(),
 			recruitment.getRequirements(),
 			recruitment.getStartDate(),
