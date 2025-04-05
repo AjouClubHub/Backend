@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
 import com.coldrice.clubing.domain.application.dto.ApplicationResponse;
 import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest;
+import com.coldrice.clubing.domain.application.dto.RejectionReasonResponse;
 import com.coldrice.clubing.domain.application.entity.Application;
 import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
 import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
@@ -126,5 +127,20 @@ public class ApplicationService {
 		return applications.stream()
 			.map(ApplicationResponse::from)
 			.toList();
+	}
+
+	public RejectionReasonResponse getRejectionReason(Long applicationId, Long memberId) {
+		Application application = applicationRepository.findById(applicationId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
+
+		if(!application.getMember().getId().equals(memberId)) {
+			throw new GlobalException(ExceptionCode.UNAUTHORIZED_REQUEST);
+		}
+
+		if(application.getStatus() != ApplicationStatus.REJECTED) {
+			throw new GlobalException(ExceptionCode.APPLICATION_NOT_REJECTED);
+		}
+
+		return RejectionReasonResponse.from(application);
 	}
 }

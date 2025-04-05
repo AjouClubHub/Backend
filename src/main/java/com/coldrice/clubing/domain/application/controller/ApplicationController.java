@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +15,7 @@ import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
 import com.coldrice.clubing.domain.application.dto.ApplicationResponse;
 import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest;
+import com.coldrice.clubing.domain.application.dto.RejectionReasonResponse;
 import com.coldrice.clubing.domain.application.service.ApplicationService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -74,6 +74,17 @@ public class ApplicationController {
 	) {
 		List<ApplicationResponse> response = applicationService.getMyApplications(userDetails.getMember());
 		return ResponseBodyDto.success("가입 신청 현황 조회 성공", response);
+	}
+
+	@Secured("ROLE_MEMBER")
+	@Operation(summary = "클럽 가입 거절 사유 조회", description = "거절된 클럽 신청의 사유를 확인합니다.")
+	@GetMapping("/api/my/applications/{applicationId}/rejection")
+	public ResponseBodyDto<RejectionReasonResponse> getRejectionReason(
+		@PathVariable Long applicationId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		RejectionReasonResponse response = applicationService.getRejectionReason(applicationId, userDetails.getMember().getId());
+		return ResponseBodyDto.success("거절 사유 조회 성공", response);
 	}
 
 }
