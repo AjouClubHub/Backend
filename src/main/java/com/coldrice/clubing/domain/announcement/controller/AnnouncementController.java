@@ -1,7 +1,10 @@
 package com.coldrice.clubing.domain.announcement.controller;
 
+import java.util.List;
+
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +52,15 @@ public class AnnouncementController {
 		AnnouncementResponse response = announcementService.updateAnnouncement(clubId, announcementId, request,
 			userDetails.getMember());
 		return ResponseBodyDto.success("공지사항 수정 완료", response);
+	}
+
+	@Operation(summary = "클럽 공지사항 목록 조회", description = "특정 클럽의 공지사항들을 모두 조회합니다.")
+	@GetMapping("/api/clubs/{clubId}/announcements")
+	public ResponseBodyDto<List<AnnouncementResponse>> getClubAnnouncements(
+		@PathVariable Long clubId
+	) {
+		List<AnnouncementResponse> response = announcementService.getAnnouncementsByClubId(clubId);
+		return ResponseBodyDto.success("공지사항 목록 조회 성공", response);
 	}
 
 }

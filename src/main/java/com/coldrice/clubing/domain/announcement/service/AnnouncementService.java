@@ -1,5 +1,7 @@
 package com.coldrice.clubing.domain.announcement.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +59,15 @@ public class AnnouncementService {
 
 		announcement.update(request.title(), request.content());
 		return AnnouncementResponse.from(announcement);
+	}
+
+	public List<AnnouncementResponse> getAnnouncementsByClubId(Long clubId) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		List<Announcement> announcements = announcementRepository.findByClubOrderByCreatedAtDesc(club);
+		return announcements.stream()
+			.map(AnnouncementResponse::from)
+			.toList();
 	}
 }
