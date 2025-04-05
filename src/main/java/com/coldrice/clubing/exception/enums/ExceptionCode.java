@@ -19,6 +19,7 @@ public enum ExceptionCode {
 	// 기타
 	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
+	VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "입력값이 유효하지 않습니다."),
 
 	// Member
 	Member_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"),
@@ -38,7 +39,12 @@ public enum ExceptionCode {
 
 	// Membership
 	NOT_FOUND_MEMBERSHIP(HttpStatus.NOT_FOUND, "해당 클럽에 가입되어 있지 않습니다." ),
-	ALREADY_WITHDRAWN(HttpStatus.FORBIDDEN, "이미 탈퇴 처리된 클럽입니다.");
+	ALREADY_WITHDRAWN(HttpStatus.FORBIDDEN, "이미 탈퇴 처리된 클럽입니다."),
+
+	// Recruitment
+	INVALID_RECRUITMENT_DATE(HttpStatus.BAD_REQUEST, "모집 시작일과 종료일을 다시 확인해주세요."),
+	DUPLICATE_RECRUITMENT(HttpStatus.FORBIDDEN, "해당 클럽에 대한 모집 공고는 이미 존재합니다." );
+
 
 	private final HttpStatus httpStatus;
 	private final String message;

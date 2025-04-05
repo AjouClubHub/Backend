@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -73,6 +74,27 @@ public class GlobalExceptionHandler {
 			.message(exceptionCode.getMessage())
 			.notValidParameters(notValidParameters)
 			.build();
+	}
+
+	// valid
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException ex) {
+		String errorMessage = ex.getBindingResult()
+			.getAllErrors()
+			.stream()
+			.findFirst()
+			.map(error -> error.getDefaultMessage())
+			.orElse("유효성 검사 실패");
+
+		ExceptionCode exceptionCode = ExceptionCode.VALIDATION_ERROR; // 원하는 코드 정의해서 사용
+
+		log.warn("검증 오류: {}", errorMessage);
+		return ResponseEntity
+			.status(exceptionCode.getHttpStatus())
+			.body(ResponseExceptionCode.builder()
+				.code(exceptionCode.name())
+				.message(errorMessage)
+				.build());
 	}
 }
 
