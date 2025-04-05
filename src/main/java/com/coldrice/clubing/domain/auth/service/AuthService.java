@@ -46,6 +46,7 @@ public class AuthService {
 			.password(encodedPassword)
 			.major(signupRequest.major())
 			.memberRole(memberRole)
+			.studentId(signupRequest.studentId())
 			.build();
 
 		Member savedMember = memberRepository.save(newMember);

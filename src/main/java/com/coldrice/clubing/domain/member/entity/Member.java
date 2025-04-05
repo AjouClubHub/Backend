@@ -35,7 +35,11 @@ public class Member extends Timestamped {
 	@Column(nullable = false)
 	private String password;
 
+	@Column(nullable = false)
 	private String major;
+
+	@Column(nullable = false, unique = true)
+	private Long studentId;
 
 	@Enumerated(EnumType.STRING)
 	private MemberRole memberRole;
