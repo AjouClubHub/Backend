@@ -77,10 +77,15 @@ public class Club extends Timestamped {
 	}
 
 	public void validateManager(Member member) {
-		System.out.println("club.getManager() = " + this.manager.getId());
-		System.out.println("requesting manager = " + manager.getId());
-		if (!this.getManager().equals(member)) {
+		if (!this.manager.getId().equals(member.getId())) {
 			throw new GlobalException(ExceptionCode.UNAUTHORIZED_MANAGER);
 		}
+	}
+
+	public void updateInfo(String description, String contactInfo, String location, String keyword) {
+		if (description != null) this.description = description;
+		if (contactInfo != null) this.contactInfo = contactInfo;
+		if (location != null) this.location = location;
+		if (keyword != null) this.keyword = keyword;
 	}
 }

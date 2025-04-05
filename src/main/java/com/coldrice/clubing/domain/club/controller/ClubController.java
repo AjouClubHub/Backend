@@ -2,6 +2,7 @@ package com.coldrice.clubing.domain.club.controller;
 
 import java.util.List;
 
+import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import com.coldrice.clubing.domain.club.dto.ClubApprovalRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.club.dto.ClubUpdateRequest;
 import com.coldrice.clubing.domain.club.service.ClubService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -75,5 +77,17 @@ public class ClubController {
 	) {
 		ClubResponse response = clubService.getClubById(clubId);
 		return ResponseBodyDto.success("클럽 단건 조회 성공", response);
+	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "클럽 정보 수정", description = "클럽 소개, 연락처, 위치, 키워드를 수정합니다.")
+	@PatchMapping("/api/clubs/{clubId}")
+	public ResponseBodyDto<Void> updateClub(
+		@PathVariable Long clubId,
+		@RequestBody ClubUpdateRequest request,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		clubService.updateClub(clubId,request,userDetails.getMember());
+		return ResponseBodyDto.success("클럽 정보 수정 완료");
 	}
 }

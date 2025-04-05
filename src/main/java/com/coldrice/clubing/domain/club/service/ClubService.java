@@ -9,6 +9,7 @@ import com.coldrice.clubing.domain.club.dto.ClubApprovalRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.club.dto.ClubUpdateRequest;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
 import com.coldrice.clubing.domain.club.entity.ClubStatus;
@@ -76,5 +77,14 @@ public class ClubService {
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
 		return ClubResponse.from(club);
+	}
+
+	@Transactional
+	public void updateClub(Long clubId, ClubUpdateRequest request, Member member) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		club.validateManager(member);
+		club.updateInfo(request.description(),request.contactInfo(),request.location(),request.keyword());
 	}
 }
