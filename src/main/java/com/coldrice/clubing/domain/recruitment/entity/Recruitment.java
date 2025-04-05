@@ -3,7 +3,6 @@ package com.coldrice.clubing.domain.recruitment.entity;
 import java.time.LocalDate;
 
 import com.coldrice.clubing.domain.club.entity.Club;
-import com.coldrice.clubing.domain.club.entity.ClubStatus;
 import com.coldrice.clubing.domain.common.Timestamped;
 
 import jakarta.persistence.Entity;
@@ -27,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Recuitment extends Timestamped {
+public class Recruitment extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,5 +44,7 @@ public class Recuitment extends Timestamped {
 	private String requirements;
 
 	@Enumerated(EnumType.STRING)
-	private ClubStatus status;
+	private RecruitmentStatus status;
+
+	private String title;
 }
