@@ -41,4 +41,21 @@ public class AnnouncementService {
 
 		return AnnouncementResponse.from(announcement);
 	}
+
+	@Transactional
+	public AnnouncementResponse updateAnnouncement(Long clubId, Long announcementId, AnnouncementRequest request, Member member) {
+		Announcement announcement = announcementRepository.findById(announcementId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_ANNOUNCEMENT));
+
+		if (!announcement.getClub().getId().equals(clubId)) {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 클럽과 공지 불일치
+		}
+
+		if(!announcement.getCreatedBy().equals(member)) {
+			throw new GlobalException(ExceptionCode.UNAUTHORIZED_MANAGER);
+		}
+
+		announcement.update(request.title(), request.content());
+		return AnnouncementResponse.from(announcement);
+	}
 }

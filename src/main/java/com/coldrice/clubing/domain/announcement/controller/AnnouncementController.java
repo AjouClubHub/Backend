@@ -2,6 +2,7 @@ package com.coldrice.clubing.domain.announcement.controller;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,4 +36,19 @@ public class AnnouncementController {
 			userDetails.getMember());
 		return ResponseBodyDto.success("공지사항 등록 완료", response);
 	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "공지사항 수정", description = "공지사항 제목 및 내용을 수정합니다.")
+	@PatchMapping("/api/clubs/{clubId}/announcements/{announcementId}")
+	public ResponseBodyDto<AnnouncementResponse> updateAnnouncement(
+		@PathVariable Long clubId,
+		@PathVariable Long announcementId,
+		@RequestBody AnnouncementRequest request, // @Valid 제거 : null 값 허용
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		AnnouncementResponse response = announcementService.updateAnnouncement(clubId, announcementId, request,
+			userDetails.getMember());
+		return ResponseBodyDto.success("공지사항 수정 완료", response);
+	}
+
 }

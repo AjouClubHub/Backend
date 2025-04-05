@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,4 +42,9 @@ public class Announcement extends Timestamped {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by")
 	private Member createdBy;
+
+	public void update(String title, String content) {
+		if (title != null) this.title = title;
+		if (content != null) this.content = content;
+	}
 }
