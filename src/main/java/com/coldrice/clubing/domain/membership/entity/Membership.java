@@ -52,4 +52,10 @@ public class Membership extends Timestamped {
 	private LocalDateTime leftAt;
 
 	private String leaveReason;
+
+	public void withdraw(String reason) {
+		this.status = MembershipStatus.WITHDRAWN;
+		this.leaveReason = reason;
+		this.leftAt = LocalDateTime.now();
+	}
 }

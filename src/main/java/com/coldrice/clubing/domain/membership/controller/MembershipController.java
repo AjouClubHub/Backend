@@ -2,13 +2,19 @@ package com.coldrice.clubing.domain.membership.controller;
 
 import java.util.List;
 
+import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.club.repository.ClubRepository;
+import com.coldrice.clubing.domain.membership.dto.ClubWithdrawRequest;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.domain.membership.service.MembershipService;
@@ -31,5 +37,17 @@ public class MembershipController {
 	) {
 		List<MyClubResponse> response = membershipService.getMyClubs(userDetails.getMember());
 		return ResponseBodyDto.success("내 가입된 클럽 목록 조회 성공", response);
+	}
+
+	@Secured("ROLE_MEMBER")
+	@Operation(summary = "클럽 탈퇴", description = "사용자가 자신이 가입한 클럽에서 탈퇴합니다.")
+	@PostMapping("/api/clubs/{clubId}/withdraw")
+	public ResponseBodyDto<Void> withdrawClub(
+		@PathVariable Long clubId,
+		@RequestBody ClubWithdrawRequest request,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		membershipService.withdrawClub(clubId, userDetails.getMember(), request.leavenReason());
+		return ResponseBodyDto.success("클럽 탈퇴가 완료되었습니다.");
 	}
 }

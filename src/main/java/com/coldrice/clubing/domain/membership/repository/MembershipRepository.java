@@ -1,6 +1,7 @@
 package com.coldrice.clubing.domain.membership.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,4 +14,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 	boolean existsByMemberAndClub(Member member, Club club);
 
 	List<Membership> findByMemberAndLeftAtIsNull(Member member);
+
+	Optional<Membership> findByMemberIdAndClubId(Long id, Long clubId);
 }
