@@ -39,7 +39,7 @@ public enum ExceptionCode {
 
 	// Membership
 	NOT_FOUND_MEMBERSHIP(HttpStatus.NOT_FOUND, "해당 클럽에 가입되어 있지 않습니다." ),
-	ALREADY_WITHDRAWN(HttpStatus.FORBIDDEN, "이미 탈퇴 처리된 클럽입니다."),
+	ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴 처리된 클럽입니다."),
 
 	// Recruitment
 	INVALID_RECRUITMENT_DATE(HttpStatus.BAD_REQUEST, "모집 시작일과 종료일을 다시 확인해주세요."),
@@ -47,7 +47,8 @@ public enum ExceptionCode {
 	NOT_FOUND_RECRUITMENT(HttpStatus.NOT_FOUND, "해당 모집 공고를 찾을 수 없습니다."),
 
 	// Announcement
-	NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다.");
+	NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."),
+	AlREADY_EXPELLED(HttpStatus.BAD_REQUEST, "이미 추방된(혹은 탈퇴한) 회원입니다." );
 
 
 	private final HttpStatus httpStatus;

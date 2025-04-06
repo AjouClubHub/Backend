@@ -58,4 +58,10 @@ public class Membership extends Timestamped {
 		this.leaveReason = reason;
 		this.leftAt = LocalDateTime.now();
 	}
+
+	public void expel(String reason) {
+		this.status = MembershipStatus.EXPELLED;
+		this.leaveReason = reason;
+		this.leftAt = LocalDateTime.now();
+	}
 }
