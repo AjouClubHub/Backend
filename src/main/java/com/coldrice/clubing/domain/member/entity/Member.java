@@ -39,7 +39,7 @@ public class Member extends Timestamped {
 	private String major;
 
 	@Column(nullable = false, unique = true)
-	private Long studentId;
+	private String studentId;
 
 	@Enumerated(EnumType.STRING)
 	private MemberRole memberRole;

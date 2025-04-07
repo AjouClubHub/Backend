@@ -12,6 +12,6 @@ public record SignupRequest(
 	@NotBlank String password,
 	String major,
 	@NotBlank String memberRole,
-	@NotBlank Long studentId
+	@NotBlank String studentId
 ) {
 }

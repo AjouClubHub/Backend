@@ -7,7 +7,7 @@ import com.coldrice.clubing.domain.membership.entity.Membership;
 public record ClubMemberResponse(
 	Long memberId,
 	String name,
-	Long studentId,
+	String studentId,
 	String major,
 	LocalDateTime joinedAt
 ) {
