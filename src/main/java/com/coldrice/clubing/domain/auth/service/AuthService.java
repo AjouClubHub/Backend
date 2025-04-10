@@ -58,4 +58,12 @@ public class AuthService {
 
 		return new SignupResponse(barerToken);
 	}
+
+	public boolean isEmailDuplicate(String email) {
+		return memberRepository.existsByEmail(email);
+	}
+
+	public boolean isStudentIdDuplicate(String studentId) {
+		return memberRepository.existsByStudentId(studentId);
+	}
 }
