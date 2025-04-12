@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 공통 설정은 유지
+!src/main/resources/application.yml
+
+# 나머지 프로파일/민감 설정은 무시
+src/main/resources/application-*.yml
+
