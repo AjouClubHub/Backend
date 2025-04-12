@@ -89,4 +89,23 @@ public class RecruitmentService {
 			.map(RecruitmentResponse::from)
 			.toList();
 	}
+
+	@Transactional
+	public void closeRecruitment(Long clubId, Long recruitmentId, Member member) {
+		Recruitment recruitment = recruitmentRepository.findById(recruitmentId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_RECRUITMENT));
+
+		if (!recruitment.getClub().getId().equals(clubId)) {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST);
+		}
+
+		recruitment.getClub().validateManager(member);
+
+		if (recruitment.getStatus() == RecruitmentStatus.CLOSED) {
+			throw new GlobalException(ExceptionCode.ALREADY_CLOSED_RECRUITMENT);
+		}
+
+		recruitment.close();
+	}
+
 }

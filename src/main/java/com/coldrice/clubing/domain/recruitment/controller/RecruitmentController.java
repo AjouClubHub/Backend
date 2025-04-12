@@ -70,8 +70,6 @@ public class RecruitmentController {
 		return ResponseBodyDto.success("모집 마감된 공고 조회 성공", response);
 	}
 
-
-
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "모집 공고 수정", description = "클럽 관리자가 모집 공고 내용을 수정합니다.")
 	@PatchMapping("/api/clubs/{clubId}/recruitment")
@@ -82,6 +80,18 @@ public class RecruitmentController {
 	) {
 		RecruitmentResponse response = recruitmentService.updateRecruitment(clubId, request, userDetails.getMember());
 		return ResponseBodyDto.success("모집 공고 수정 완료", response);
+	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "모집 공고 마감", description = "클럽 관리자가 특정 모집 공고를 마감합니다.")
+	@PatchMapping("/api/clubs/{clubId}/recruitments/{recruitmentId}/close")
+	public ResponseBodyDto<Void> closeRecruitment(
+		@PathVariable Long clubId,
+		@PathVariable Long recruitmentId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		recruitmentService.closeRecruitment(clubId, recruitmentId, userDetails.getMember());
+		return ResponseBodyDto.success("모집 공고 마감 완료");
 	}
 
 }

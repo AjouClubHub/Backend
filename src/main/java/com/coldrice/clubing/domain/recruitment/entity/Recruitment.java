@@ -54,4 +54,8 @@ public class Recruitment extends Timestamped {
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
+
+	public void close() {
+		this.status = RecruitmentStatus.CLOSED;
+	}
 }

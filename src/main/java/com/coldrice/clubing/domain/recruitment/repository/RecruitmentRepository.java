@@ -14,4 +14,6 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
 	Optional<Recruitment> findByClubId(Long clubId);
 
 	List<Recruitment> findByStatusOrderByCreatedAtDesc(RecruitmentStatus status);
+
+	List<Recruitment> findByStatus(RecruitmentStatus status);
 }
