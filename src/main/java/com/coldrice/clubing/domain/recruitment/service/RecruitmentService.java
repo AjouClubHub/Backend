@@ -82,4 +82,11 @@ public class RecruitmentService {
 
 		return RecruitmentResponse.from(recruitment);
 	}
+
+	public List<RecruitmentResponse> getRecruitmentsByStatus(RecruitmentStatus status) {
+		List<Recruitment> recruitments = recruitmentRepository.findByStatusOrderByCreatedAtDesc(status);
+		return recruitments.stream()
+			.map(RecruitmentResponse::from)
+			.toList();
+	}
 }

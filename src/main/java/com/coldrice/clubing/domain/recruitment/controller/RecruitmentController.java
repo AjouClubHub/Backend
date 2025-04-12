@@ -16,6 +16,7 @@ import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentRequest;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentResponse;
 import com.coldrice.clubing.domain.recruitment.dto.RecruitmentUpdateRequest;
+import com.coldrice.clubing.domain.recruitment.entity.RecruitmentStatus;
 import com.coldrice.clubing.domain.recruitment.service.RecruitmentService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -54,6 +55,22 @@ public class RecruitmentController {
 		List<RecruitmentResponse> response = recruitmentService.getAllRecruitments();
 		return ResponseBodyDto.success("전체 모집 공고 조회 성공", response);
 	}
+
+	@Operation(summary = "모집 중인 공고 조회", description = "현재 모집 중(OPEN)인 모집 공고를 조회합니다.")
+	@GetMapping("/api/recruitments/open")
+	public ResponseBodyDto<List<RecruitmentResponse>> getOpenRecruitments() {
+		List<RecruitmentResponse> response = recruitmentService.getRecruitmentsByStatus(RecruitmentStatus.OPEN);
+		return ResponseBodyDto.success("모집 중인 공고 조회 성공", response);
+	}
+
+	@Operation(summary = "모집 완료된 공고 조회", description = "모집 마감(CLOSED)된 모집 공고를 조회합니다.")
+	@GetMapping("/api/recruitments/closed")
+	public ResponseBodyDto<List<RecruitmentResponse>> getClosedRecruitments() {
+		List<RecruitmentResponse> response = recruitmentService.getRecruitmentsByStatus(RecruitmentStatus.CLOSED);
+		return ResponseBodyDto.success("모집 마감된 공고 조회 성공", response);
+	}
+
+
 
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "모집 공고 수정", description = "클럽 관리자가 모집 공고 내용을 수정합니다.")
