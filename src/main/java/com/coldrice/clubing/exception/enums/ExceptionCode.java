@@ -15,11 +15,14 @@ public enum ExceptionCode {
 	LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
 	UNAUTHORIZED_MANAGER(HttpStatus.UNAUTHORIZED, "유효하지 않은 클럽 관리자입니다"),
 	UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "본인의 요청이 아닙니다."),
+	INVALID_EMAIL_CODE(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다." ),
+	EMAIL_NOT_VERIFIED(HttpStatus.UNAUTHORIZED, "인증되지 않은 이메일입니다." ),
 
 	// 기타
 	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
 	VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "입력값이 유효하지 않습니다."),
+	INVALID_AJOU_EMAIL(HttpStatus.BAD_REQUEST, "ajou.ac.kr 이메일만 허용됩니다."),
 
 	// Member
 	Member_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"),

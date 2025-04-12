@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.auth.dto.SignupRequest;
 import com.coldrice.clubing.domain.auth.dto.SignupResponse;
+import com.coldrice.clubing.domain.common.email.EmailCodeManager;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
@@ -22,10 +23,16 @@ public class AuthService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
+	private final EmailCodeManager emailCodeManager;
 	// private final S3Uploader s3Uploader
 
 	@Transactional
 	public SignupResponse signup(SignupRequest signupRequest) {
+
+		// 이메일 인증 확인
+		if (!emailCodeManager.isVerified(signupRequest.email())) {
+			throw new GlobalException(ExceptionCode.EMAIL_NOT_VERIFIED);
+		}
 
 		// 아주대 이메일 도메인 확인
 		if (!signupRequest.email().endsWith("@ajou.ac.kr")) {

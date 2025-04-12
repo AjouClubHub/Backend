@@ -12,7 +12,6 @@ public record SignupRequest(
 
 	@Schema(description = "아주대학교 이메일", example = "test@ajou.ac.kr")
 	@NotBlank @Email
-	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@ajou\\.ac\\.kr$", message = "ajou.ac.kr 이메일만 허용됩니다.")
 	String email,
 
 	@Schema(description = "비밀번호", example = "SecureP@ssw0rd!")
