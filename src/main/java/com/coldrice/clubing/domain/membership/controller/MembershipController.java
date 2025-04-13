@@ -34,7 +34,6 @@ public class MembershipController {
 
 	private final MembershipService membershipService;
 
-	@Secured("ROLE_MEMBER")
 	@Operation(summary = "내가 가입한 클럽 목록 조회", description = "로그인한 사용자가 현재 가입 중인 클럽 목록을 조회합니다.")
 	@GetMapping("/api/my/clubs")
 	public ResponseBodyDto<List<MyClubResponse>> getMyClubs(
@@ -44,7 +43,6 @@ public class MembershipController {
 		return ResponseBodyDto.success("내 가입된 클럽 목록 조회 성공", response);
 	}
 
-	@Secured("ROLE_MEMBER")
 	@Operation(summary = "클럽 탈퇴", description = "사용자가 자신이 가입한 클럽에서 탈퇴합니다.")
 	@DeleteMapping("/api/clubs/{clubId}/withdraw")
 	public ResponseBodyDto<Void> withdrawClub(
