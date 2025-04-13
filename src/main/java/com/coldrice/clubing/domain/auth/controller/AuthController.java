@@ -54,7 +54,7 @@ public class AuthController {
 	}
 
 	@Operation(summary = "이메일 인증코드 발송", description = "아주대 이메일로 인증코드를 전송합니다.")
-	@PostMapping("/api/auth/send-email")
+	@PostMapping("/send-email")
 	public ResponseBodyDto<Void> sendEmail(@RequestBody @Valid EmailRequest request) {
 		emailValidator.validateAjouDomain(request.email());
 
