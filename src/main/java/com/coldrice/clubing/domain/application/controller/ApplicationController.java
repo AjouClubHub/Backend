@@ -66,7 +66,6 @@ public class ApplicationController {
 		return ResponseBodyDto.success("가입 승인/거절이 완료되었습니다");
 	}
 
-	@Secured("ROLE_MEMBER")
 	@Operation(summary = "내 클럽 가입 신청 현황 조회", description = "사용자가 본인이 신청한 클럽 가입 상태를 확인합니다,")
 	@GetMapping("/api/my/applications")
 	public ResponseBodyDto<List<ApplicationResponse>> getMyApplication(
@@ -76,7 +75,6 @@ public class ApplicationController {
 		return ResponseBodyDto.success("가입 신청 현황 조회 성공", response);
 	}
 
-	@Secured("ROLE_MEMBER")
 	@Operation(summary = "클럽 가입 거절 사유 조회", description = "거절된 클럽 신청의 사유를 확인합니다.")
 	@GetMapping("/api/my/applications/{applicationId}/rejection")
 	public ResponseBodyDto<RejectionReasonResponse> getRejectionReason(
