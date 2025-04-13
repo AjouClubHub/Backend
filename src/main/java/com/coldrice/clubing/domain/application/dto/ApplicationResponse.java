@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 import com.coldrice.clubing.domain.application.entity.Application;
 import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
+import com.coldrice.clubing.domain.club.entity.ClubType;
 
 public record ApplicationResponse(
 	Long applicationId,
+	ClubType clubType,
 	String clubName,
 	String memberName,
 	ApplicationStatus status,
@@ -15,6 +17,7 @@ public record ApplicationResponse(
 	public static ApplicationResponse from(Application application) {
 		return new ApplicationResponse(
 			application.getId(),
+			application.getClub().getType(),
 			application.getClub().getName(),
 			application.getMember().getName(),
 			application.getStatus(),
