@@ -58,6 +58,13 @@ public class ClubController {
 		return ResponseBodyDto.success("승인된 클럽 목록 조회 성공", response);
 	}
 
+	@Operation(summary = "PENDING 상태의 클럽 목록 조회", description = "사용자가 관리자가 등록되지 않은 PENDING 상태의 클럽 목록을 조회합니다.")
+	@GetMapping("/api/clubs/pending")
+	public ResponseBodyDto<List<ClubResponse>> getPendingClubs() {
+		List<ClubResponse> response = clubService.getPendingClubs();
+		return ResponseBodyDto.success("관리자 미인증 클럽 목록 조회 성공", response);
+	}
+
 	// 클럽 등록 신청 승인/거절
 	@Secured("ROLE_ADMIN")
 	@Operation(summary = "클럽 등록 승인/거절 처리", description = "관리자가 특정 클럽 등록 요청을 승인 또는 거절합니다.")

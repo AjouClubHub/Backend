@@ -87,4 +87,11 @@ public class ClubService {
 		club.validateManager(member);
 		club.updateInfo(request.description(),request.contactInfo(),request.location(),request.keyword());
 	}
+
+	public List<ClubResponse> getPendingClubs() {
+		List<Club> pendingClubs = clubRepository.findAllByStatus(ClubStatus.PENDING);
+		return pendingClubs.stream()
+			.map(ClubResponse::from)
+			.toList();
+	}
 }
