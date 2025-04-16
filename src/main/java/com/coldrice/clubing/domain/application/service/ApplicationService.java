@@ -95,7 +95,13 @@ public class ApplicationService {
 			throw new GlobalException(ExceptionCode.INVALID_REQUEST);
 		}
 
+		// 이미 승인 처리 된것에 대한 예외처리
+		if (application.getStatus() == ApplicationStatus.APPROVED) {
+			throw new GlobalException(ExceptionCode.ALREADY_APPROVED);
+		}
+
 		ApplicationStatus requestedStatus = request.status();
+
 
 		if (requestedStatus == ApplicationStatus.REJECTED) {
 			String reason = request.rejectionReason();
