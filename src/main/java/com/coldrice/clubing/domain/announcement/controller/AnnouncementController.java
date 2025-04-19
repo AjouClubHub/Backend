@@ -63,4 +63,15 @@ public class AnnouncementController {
 		return ResponseBodyDto.success("공지사항 목록 조회 성공", response);
 	}
 
+	@Operation(summary = "공지사항 단건 조회", description = "특정 공지사항을 단건 조회합니다. 조회수도 함께 증가합니다.")
+	@GetMapping("/api/clubs/{clubId}/announcements/{announcementId}")
+	public ResponseBodyDto<AnnouncementResponse> getAnnouncement(
+		@PathVariable Long clubId,
+		@PathVariable Long announcementId
+	) {
+		AnnouncementResponse response = announcementService.getAnnouncementById(clubId, announcementId);
+		return ResponseBodyDto.success("공지사항 단건 조회 성공", response);
+	}
+
+
 }

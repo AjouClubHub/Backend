@@ -70,4 +70,15 @@ public class AnnouncementService {
 			.map(AnnouncementResponse::from)
 			.toList();
 	}
+
+	public AnnouncementResponse getAnnouncementById(Long clubId, Long announcementId) {
+		Announcement announcement = announcementRepository.findByIdAndClubId(announcementId, clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_ANNOUNCEMENT));
+
+		announcement.increaseView(); // 조회수 증가
+		announcementRepository.save(announcement); // 조회수 반영 저장
+
+		return AnnouncementResponse.from(announcement);
+	}
+
 }
