@@ -47,6 +47,9 @@ dependencies {
     // SMTP
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.0.5'
 
+    // SMS
+    implementation 'net.nurigo:sdk:4.3.0'
+
 }
 
 tasks.named('test') {

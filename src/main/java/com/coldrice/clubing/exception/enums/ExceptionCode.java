@@ -15,7 +15,7 @@ public enum ExceptionCode {
 	LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
 	UNAUTHORIZED_MANAGER(HttpStatus.UNAUTHORIZED, "유효하지 않은 클럽 관리자입니다"),
 	UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "본인의 요청이 아닙니다."),
-	INVALID_EMAIL_CODE(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다." ),
+	INVALID_CODE(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다." ),
 	EMAIL_NOT_VERIFIED(HttpStatus.UNAUTHORIZED, "인증되지 않은 이메일입니다." ),
 
 	// 기타
@@ -52,9 +52,10 @@ public enum ExceptionCode {
 
 	// Announcement
 	NOT_FOUND_ANNOUNCEMENT(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."),
-	AlREADY_EXPELLED(HttpStatus.BAD_REQUEST, "이미 추방된(혹은 탈퇴한) 회원입니다." );
+	AlREADY_EXPELLED(HttpStatus.BAD_REQUEST, "이미 추방된(혹은 탈퇴한) 회원입니다." ),
 
-
+	// sms
+	PHONE_MISMATCH(HttpStatus.BAD_REQUEST, "전화번호가 일치하지 않습니다." );
 
 	private final HttpStatus httpStatus;
 	private final String message;

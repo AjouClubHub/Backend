@@ -2,7 +2,6 @@ package com.coldrice.clubing.domain.club.controller;
 
 import java.util.List;
 
-import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,10 @@ import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
 import com.coldrice.clubing.domain.club.dto.ClubUpdateRequest;
+import com.coldrice.clubing.domain.club.service.ClubManagerAuthService;
 import com.coldrice.clubing.domain.club.service.ClubService;
+import com.coldrice.clubing.domain.common.sms.dto.SmsRequest;
+import com.coldrice.clubing.domain.common.sms.dto.SmsVerificationRequest;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class ClubController {
 
 	private final ClubService clubService;
+	private final ClubManagerAuthService clubManagerAuthService;
 
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "클럽 등록 요청", description = "클럽 관리자가 새로운 클럽 등록을 요청합니다.")
@@ -94,7 +97,32 @@ public class ClubController {
 		@RequestBody ClubUpdateRequest request,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		clubService.updateClub(clubId,request,userDetails.getMember());
+		clubService.updateClub(clubId, request, userDetails.getMember());
 		return ResponseBodyDto.success("클럽 정보 수정 완료");
 	}
+
+	@Operation(summary = "클럽 관리자 인증번호 요청",
+		description = "해당 클럽의 등록된 전화번호로 인증 코드를 전송합니다. 클럽의 contactInfo와 일치해야 합니다.")
+	@PostMapping("/api/clubs/{clubId}/manager-auth/request")
+	public ResponseBodyDto<Void> requestManagerAuth(
+		@PathVariable Long clubId,
+		@RequestBody SmsRequest request
+	) {
+		clubManagerAuthService.requestVerification(clubId, request.phoneNumber());
+		return ResponseBodyDto.success("인증 코드 전송 완료");
+	}
+
+	@Operation(summary = "클럽 관리자 인증 코드 검증",
+		description = "사용자가 받은 인증 코드를 검증하고, 검증에 성공하면 사용자 권한을 MANAGER로 변경하고 클럽의 관리자 정보를 등록합니다.")
+	@PatchMapping("/api/clubs/{clubId}/manager-auth/verify")
+	public ResponseBodyDto<Void> verifyManagerAuthCode(
+		@PathVariable Long clubId,
+		@RequestBody @Valid SmsVerificationRequest request,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		clubManagerAuthService.verifyCodeAndPromoteManager(clubId, request.phoneNumber(), request.code(),
+			userDetails.getMember());
+		return ResponseBodyDto.success("클럽 관리자 인증 완료");
+	}
+
 }

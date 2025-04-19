@@ -57,4 +57,7 @@ public class Member extends Timestamped {
 		return getClass().hashCode();
 	}
 
+	public void updateRoleToManager() {
+		this.memberRole = MemberRole.MANAGER;
+	}
 }

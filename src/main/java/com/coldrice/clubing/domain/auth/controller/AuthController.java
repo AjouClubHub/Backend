@@ -15,7 +15,6 @@ import com.coldrice.clubing.domain.auth.service.AuthService;
 import com.coldrice.clubing.domain.common.email.EmailCodeManager;
 import com.coldrice.clubing.domain.common.email.EmailService;
 import com.coldrice.clubing.domain.common.email.EmailValidator;
-import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 import com.coldrice.clubing.util.ResponseBodyDto;
@@ -70,7 +69,7 @@ public class AuthController {
 		@RequestBody EmailVerificationRequest request
 	) {
 		if (!emailCodeManager.verifyCode(request.email(), request.code())) {
-			throw new GlobalException(ExceptionCode.INVALID_EMAIL_CODE);
+			throw new GlobalException(ExceptionCode.INVALID_CODE);
 		}
 
 		// 인증 성공 → 인증된 이메일로 임시 캐시 저장

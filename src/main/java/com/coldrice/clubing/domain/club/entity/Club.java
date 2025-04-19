@@ -88,4 +88,9 @@ public class Club extends Timestamped {
 		if (location != null) this.location = location;
 		if (keyword != null) this.keyword = keyword;
 	}
+
+	public void updateManager(Member member) {
+		this.manager = member;
+		this.status = ClubStatus.APPROVED; // 인증 성공 시 승인 상태로 전환
+	}
 }
