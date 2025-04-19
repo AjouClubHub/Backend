@@ -39,6 +39,7 @@ public enum ExceptionCode {
 	INVALID_REJECTED_REASON(HttpStatus.BAD_REQUEST, "가입 신청 거절시 거절 사유는 필수입니다." ),
 	MAJOR_REQUIREMENT_NOT_MET(HttpStatus.FORBIDDEN, "학과가 모집 요건에 부합하지 않습니다."),
 	APPLICATION_NOT_REJECTED(HttpStatus.BAD_REQUEST, "거절된 신청이 아닙니다."),
+	ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "이미 승인되었습니다." ),
 
 	// Membership
 	NOT_FOUND_MEMBERSHIP(HttpStatus.NOT_FOUND, "해당 클럽에 가입되어 있지 않습니다." ),
