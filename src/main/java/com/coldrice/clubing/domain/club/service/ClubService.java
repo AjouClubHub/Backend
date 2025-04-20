@@ -9,12 +9,14 @@ import com.coldrice.clubing.domain.club.dto.ClubApprovalRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.club.dto.ClubSearchRequest;
 import com.coldrice.clubing.domain.club.dto.ClubUpdateRequest;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
 import com.coldrice.clubing.domain.club.entity.ClubStatus;
 import com.coldrice.clubing.domain.club.entity.ClubType;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
+import com.coldrice.clubing.domain.club.repository.ClubSpecification;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
@@ -93,5 +95,10 @@ public class ClubService {
 		return pendingClubs.stream()
 			.map(ClubResponse::from)
 			.toList();
+	}
+
+	public List<ClubResponse> searchClubs(ClubSearchRequest request) {
+		List<Club> clubs = clubRepository.findAll(ClubSpecification.search(request));
+		return clubs.stream().map(ClubResponse::from).toList();
 	}
 }

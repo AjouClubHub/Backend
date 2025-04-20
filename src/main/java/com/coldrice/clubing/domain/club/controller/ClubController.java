@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
@@ -16,6 +19,7 @@ import com.coldrice.clubing.domain.club.dto.ClubApprovalRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterRequest;
 import com.coldrice.clubing.domain.club.dto.ClubRegisterResponse;
 import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.club.dto.ClubSearchRequest;
 import com.coldrice.clubing.domain.club.dto.ClubUpdateRequest;
 import com.coldrice.clubing.domain.club.service.ClubManagerAuthService;
 import com.coldrice.clubing.domain.club.service.ClubService;
@@ -123,6 +127,15 @@ public class ClubController {
 		clubManagerAuthService.verifyCodeAndPromoteManager(clubId, request.phoneNumber(), request.code(),
 			userDetails.getMember());
 		return ResponseBodyDto.success("클럽 관리자 인증 완료");
+	}
+
+	@Operation(summary = "클럽 검색", description = "카테고리, 키워드, 이름 등 조겅을 통해 클럽을 검색합니다.")
+	@GetMapping("/api/clubs/search")
+	public ResponseBodyDto<List<ClubResponse>> searchClubs(
+		@ModelAttribute ClubSearchRequest request
+	) {
+		List<ClubResponse> response = clubService.searchClubs(request);
+		return ResponseBodyDto.success("클럽 검색 성공", response);
 	}
 
 }
