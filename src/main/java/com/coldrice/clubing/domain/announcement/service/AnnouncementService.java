@@ -35,6 +35,7 @@ public class AnnouncementService {
 		Announcement announcement = Announcement.builder()
 			.title(request.title())
 			.content(request.content())
+			.category(request.category())
 			.club(club)
 			.createdBy(member)
 			.build();
