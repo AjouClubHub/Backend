@@ -1,6 +1,7 @@
 package com.coldrice.clubing.domain.application.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,4 +18,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	List<Application> findByMemberOrderByCreatedAtDesc(Member member);
 
 	int countByClubIdAndStatus(Long id, ApplicationStatus applicationStatus);
+
+	Optional<Application> findByClubIdAndMemberId(Long clubId, Long memberId);
 }

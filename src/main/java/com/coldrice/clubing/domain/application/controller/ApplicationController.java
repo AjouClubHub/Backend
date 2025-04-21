@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,5 +85,16 @@ public class ApplicationController {
 		RejectionReasonResponse response = applicationService.getRejectionReason(applicationId, userDetails.getMember().getId());
 		return ResponseBodyDto.success("거절 사유 조회 성공", response);
 	}
+
+	@Operation(summary = "클럽 가입 신청 취소", description = "사용자가 가입 신청(PENDING 상태)을 취소합니다.")
+	@DeleteMapping("/api/clubs/{clubId}/applications")
+	public ResponseBodyDto<Void> cancelApplication(
+		@PathVariable Long clubId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		applicationService.cancelApplication(clubId, userDetails.getMember());
+		return ResponseBodyDto.success("가입 신청이 취소되었습니다.");
+	}
+
 
 }

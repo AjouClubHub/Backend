@@ -149,4 +149,16 @@ public class ApplicationService {
 
 		return RejectionReasonResponse.from(application);
 	}
+
+	@Transactional
+	public void cancelApplication(Long clubId, Member member) {
+		Application application = applicationRepository.findByClubIdAndMemberId(clubId, member.getId())
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
+
+		if (application.getStatus() != ApplicationStatus.PENDING) {
+			throw new GlobalException(ExceptionCode.CANNOT_CANCEL_NONE_PENDING_APPLICATION);
+		}
+
+		applicationRepository.delete(application);
+	}
 }

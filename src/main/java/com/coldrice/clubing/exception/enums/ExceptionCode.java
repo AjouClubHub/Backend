@@ -40,6 +40,7 @@ public enum ExceptionCode {
 	MAJOR_REQUIREMENT_NOT_MET(HttpStatus.FORBIDDEN, "학과가 모집 요건에 부합하지 않습니다."),
 	APPLICATION_NOT_REJECTED(HttpStatus.BAD_REQUEST, "거절된 신청이 아닙니다."),
 	ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "이미 승인되었습니다." ),
+	CANNOT_CANCEL_NONE_PENDING_APPLICATION(HttpStatus.BAD_REQUEST, "대기 상태가 아닌 신청은 취소할 수 없습니다."),
 
 	// Membership
 	NOT_FOUND_MEMBERSHIP(HttpStatus.NOT_FOUND, "해당 클럽에 가입되어 있지 않습니다." ),
