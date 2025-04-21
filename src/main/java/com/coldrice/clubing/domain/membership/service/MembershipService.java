@@ -2,15 +2,17 @@ package com.coldrice.clubing.domain.membership.service;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coldrice.clubing.domain.club.dto.ClubResponse;
+import com.coldrice.clubing.domain.announcement.repository.AnnouncementRepository;
+import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
+import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
+import com.coldrice.clubing.domain.membership.dto.ManagedClubResponse;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
@@ -26,6 +28,8 @@ public class MembershipService {
 
 	private final MembershipRepository membershipRepository;
 	private final ClubRepository clubRepository;
+	private final AnnouncementRepository announcementRepository;
+	private final ApplicationRepository applicationRepository;
 
 	public List<MyClubResponse> getMyClubs(Member member) {
 		// 가입 상태이면서 탈퇴하지 않은 (leftAt IS NULL) 클럽만 조회
@@ -48,7 +52,7 @@ public class MembershipService {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
-		Membership membership = membershipRepository.findByMemberIdAndClubId(member.getId(),clubId)
+		Membership membership = membershipRepository.findByMemberIdAndClubId(member.getId(), clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_MEMBERSHIP));
 
 		if (membership.getStatus() == MembershipStatus.WITHDRAWN || membership.getLeftAt() != null) {
@@ -85,6 +89,31 @@ public class MembershipService {
 		}
 
 		membership.expel(reason);
+	}
+
+	public List<ManagedClubResponse> getMyManagedClubs(Member member) {
+		List<Club> managedClubs = clubRepository.findAllByManagerId(member.getId());
+
+		return managedClubs.stream()
+			.map(club -> {
+				int memberCount = membershipRepository.countByClubIdAndStatus(club.getId(), MembershipStatus.ACTIVE);
+				int pendingCount = applicationRepository.countByClubIdAndStatus(club.getId(),
+					ApplicationStatus.PENDING);
+				int announcementCount = announcementRepository.countByClubId(club.getId());
+
+				return ManagedClubResponse.from(club, memberCount, pendingCount, announcementCount);
+			}).toList();
+	}
+
+	public ManagedClubResponse getMyManagedClubById(Long clubId, Member member) {
+		Club club = clubRepository.findByIdAndManager(clubId, member)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.UNAUTHORIZED_MANAGER));
+
+		int memberCount = membershipRepository.countByClubIdAndStatus(club.getId(), MembershipStatus.ACTIVE);
+		int pendingCount = applicationRepository.countByClubIdAndStatus(club.getId(), ApplicationStatus.PENDING);
+		int announcementCount = announcementRepository.countByClubId(club.getId());
+
+		return ManagedClubResponse.from(club, memberCount, pendingCount, announcementCount);
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubStatus;
+import com.coldrice.clubing.domain.member.entity.Member;
 
 public interface ClubRepository extends JpaRepository<Club, Long>, JpaSpecificationExecutor<Club> {
 	boolean existsByName(String name);
@@ -18,5 +19,7 @@ public interface ClubRepository extends JpaRepository<Club, Long>, JpaSpecificat
 
 	List<Club> findAllByStatus(ClubStatus clubStatus);
 
-	// 추가 고려 사항 : 동아리/소학회 필터링 조회, 키워드 기반 검색
+	List<Club> findAllByManagerId(Long id);
+
+	Optional<Club> findByIdAndManager(Long id, Member manager);
 }

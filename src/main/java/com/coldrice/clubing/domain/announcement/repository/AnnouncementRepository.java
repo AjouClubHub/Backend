@@ -12,4 +12,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
 	List<Announcement> findByClubOrderByCreatedAtDesc(Club club);
 
 	Optional<Announcement> findByIdAndClubId(Long announcementId, Long clubId);
+
+	int countByClubId(Long id);
 }

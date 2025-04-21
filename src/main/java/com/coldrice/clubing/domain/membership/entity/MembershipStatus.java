@@ -9,6 +9,6 @@ public enum MembershipStatus {
 		return Arrays.stream(MembershipStatus.values())
 			.filter(r -> r.name().equalsIgnoreCase(role))
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 MemberRole"));
+			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 MembershipStatus"));
 	}
 }
