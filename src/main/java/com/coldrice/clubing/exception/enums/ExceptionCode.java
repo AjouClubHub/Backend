@@ -44,6 +44,7 @@ public enum ExceptionCode {
 	// Membership
 	NOT_FOUND_MEMBERSHIP(HttpStatus.NOT_FOUND, "해당 클럽에 가입되어 있지 않습니다." ),
 	ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴 처리된 클럽입니다."),
+	NOT_JOINED_CLUB(HttpStatus.BAD_REQUEST, "해당 클럽에 가입되지 않았습니다."),
 
 	// Recruitment
 	INVALID_RECRUITMENT_DATE(HttpStatus.BAD_REQUEST, "모집 시작일과 종료일을 다시 확인해주세요."),

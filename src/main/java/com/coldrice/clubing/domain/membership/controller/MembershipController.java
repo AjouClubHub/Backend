@@ -43,7 +43,18 @@ public class MembershipController {
 		return ResponseBodyDto.success("내 가입된 클럽 목록 조회 성공", response);
 	}
 
-	@Operation(summary = "클럽 탈퇴", description = "사용자가 자신이 가입한 클럽에서 탈퇴합니다.")
+	@Operation(summary = "내가 가입한 클럽 단건 조회", description = "가입중인 클럽")
+	@GetMapping("/api/my/clubs/{clubId}")
+	public ResponseBodyDto<MyClubResponse> getMyClubById(
+		@PathVariable Long clubId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		MyClubResponse response = membershipService.getMyClubById(clubId, userDetails.getMember());
+		return ResponseBodyDto.success("내 가입된 클럽 상세 조회 성공", response);
+	}
+
+
+	@Operation(summary = "클럽 탈퇴", description = "로그인한 사용자가 가입한 클럽 중 하나를 상세 조회합니다.")
 	@DeleteMapping("/api/clubs/{clubId}/withdraw")
 	public ResponseBodyDto<Void> withdrawClub(
 		@PathVariable Long clubId,

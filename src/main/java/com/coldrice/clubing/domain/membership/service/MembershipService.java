@@ -36,6 +36,13 @@ public class MembershipService {
 
 	}
 
+	public MyClubResponse getMyClubById(Long clubId, Member member) {
+		Membership membership = membershipRepository.findByMemberIdAndClubId(member.getId(), clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_JOINED_CLUB));
+
+		return MyClubResponse.from(membership);
+	}
+
 	@Transactional
 	public void withdrawClub(Long clubId, Member member, String reason) {
 		Club club = clubRepository.findById(clubId)
@@ -79,4 +86,5 @@ public class MembershipService {
 
 		membership.expel(reason);
 	}
+
 }
