@@ -14,6 +14,8 @@ public record ManagedClubResponse(
 	String keyword,
 	String description,
 	LocalDateTime createdAt,
+	String imaUrl,
+	String snsUrl,
 	int memberCount,         // 현재 가입된 멤버 수
 	int pendingApplications, // 대기 중인 가입 신청 수
 	int announcementCount    // 공지사항 수
@@ -28,6 +30,8 @@ public record ManagedClubResponse(
 			club.getKeyword(),
 			club.getDescription(),
 			club.getCreatedAt(),
+			club.getImageUrl(),
+			club.getSnsUrl(),
 			memberCount,
 			pendingApplications,
 			announcementCount

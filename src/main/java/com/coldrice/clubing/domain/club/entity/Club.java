@@ -71,6 +71,10 @@ public class Club extends Timestamped {
 	@JoinColumn(name = "manager_id")
 	private Member manager; // member : club  == 1:N
 
+	private String imageUrl;
+
+	private String snsUrl;
+
 	public void updateStatus(ClubStatus status, String rejectionReason) {
 		this.status = status;
 		this.rejectionReason = rejectionReason;

@@ -20,7 +20,9 @@ public record ClubResponse(
 	java.util.List<RequiredMajor> joinRequirement,
 	ClubStatus status,
 	LocalDateTime createdAt,
-	LocalDateTime updatedAt
+	LocalDateTime updatedAt,
+	String imaUrl,
+	String snsUrl
 ) {
 	// 팩토리 메서드
 	public static ClubResponse from(Club club) {
@@ -36,7 +38,9 @@ public record ClubResponse(
 			club.getRequiredMajors(),
 			club.getStatus(),
 			club.getCreatedAt(),
-			club.getUpdatedAt()
+			club.getUpdatedAt(),
+			club.getImageUrl(),
+			club.getSnsUrl()
 		);
 	}
 }
