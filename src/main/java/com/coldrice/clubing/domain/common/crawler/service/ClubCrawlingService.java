@@ -114,7 +114,7 @@ public class ClubCrawlingService {
 								.snsUrl(finalSns)
 								.imageUrl(finalImageUrl)
 								.type(ClubType.동아리)
-								.status(ClubStatus.PENDING)
+								.status(ClubStatus.APPROVED)
 								.build());
 
 						clubRepository.save(club);
