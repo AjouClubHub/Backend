@@ -77,7 +77,8 @@ public class WebSecurityConfig {
 					"/swagger-ui/**",
 					"/swagger-ui.html",
 					"/swagger-resources/**",
-					"/webjars/**"
+					"/webjars/**",
+					"/api/crawler/**"
 				).permitAll() // Swagger 관련 요청 허용
 				.anyRequest().authenticated() // 그 외 모든 요청 인증처리
 		);

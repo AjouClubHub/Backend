@@ -87,10 +87,30 @@ public class Club extends Timestamped {
 	}
 
 	public void updateInfo(String description, String contactInfo, String location, String keyword) {
-		if (description != null) this.description = description;
-		if (contactInfo != null) this.contactInfo = contactInfo;
-		if (location != null) this.location = location;
-		if (keyword != null) this.keyword = keyword;
+		if (description != null)
+			this.description = description;
+		if (contactInfo != null)
+			this.contactInfo = contactInfo;
+		if (location != null)
+			this.location = location;
+		if (keyword != null)
+			this.keyword = keyword;
+	}
+
+	public void updateClubInfo(String description,
+		ClubCategory category,
+		String contactInfo,
+		String location,
+		String keyword,
+		String snsUrl,
+		String imageUrl) {
+		this.description = description;
+		this.category = category;
+		this.contactInfo = contactInfo;
+		this.location = location;
+		this.keyword = keyword;
+		this.snsUrl = snsUrl;
+		this.imageUrl = imageUrl;
 	}
 
 	public void updateManager(Member member) {
