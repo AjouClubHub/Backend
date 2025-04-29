@@ -2,6 +2,7 @@ package com.coldrice.clubing.domain.club.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.coldrice.clubing.domain.common.Timestamped;
 import com.coldrice.clubing.domain.member.entity.Member;
@@ -97,6 +98,11 @@ public class Club extends Timestamped {
 			this.keyword = keyword;
 	}
 
+	public void updateManager(Member member) {
+		this.manager = member;
+		this.status = ClubStatus.APPROVED; // 인증 성공 시 승인 상태로 전환
+	}
+
 	public void updateClubInfo(String description,
 		ClubCategory category,
 		String contactInfo,
@@ -113,8 +119,14 @@ public class Club extends Timestamped {
 		this.imageUrl = imageUrl;
 	}
 
-	public void updateManager(Member member) {
-		this.manager = member;
-		this.status = ClubStatus.APPROVED; // 인증 성공 시 승인 상태로 전환
+	public boolean needsUpdate(String newDescription, ClubCategory newCategory, String newContactInfo,
+	String newLocation, String newKeyword, String newSnsUrl, String newImageUrl) {
+		return !Objects.equals(this.description, newDescription)
+			|| !Objects.equals(this.category, newCategory)
+			|| !Objects.equals(this.contactInfo, newContactInfo)
+			|| !Objects.equals(this.location, newLocation)
+			|| !Objects.equals(this.keyword, newKeyword)
+			|| !Objects.equals(this.snsUrl, newSnsUrl)
+			|| !Objects.equals(this.imageUrl, newImageUrl);
 	}
 }
