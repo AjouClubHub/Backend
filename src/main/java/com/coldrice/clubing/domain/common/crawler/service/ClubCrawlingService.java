@@ -1,6 +1,8 @@
 package com.coldrice.clubing.domain.common.crawler.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +11,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubCategory;
@@ -25,6 +29,8 @@ public class ClubCrawlingService {
 
 	private final ClubRepository clubRepository;
 
+	@Transactional
+	@Scheduled(cron = "0 0 0 */3 * *") // 매 3일마다 00시 00분에 실행
 	public void crawlAndSaveClubs() {
 		Map<String, ClubCategory> categoryMap = Map.of(
 			"club_list01.do", ClubCategory.과학기술분과,
@@ -101,7 +107,8 @@ public class ClubCrawlingService {
 
 						Club club = clubRepository.findByName(name)
 							.map(existing -> {
-								existing.updateClubInfo(description, category, contact, location, finalKeyword, finalSns, finalSns);
+								existing.updateClubInfo(description, category, contact, location, finalKeyword,
+									finalSns, finalSns);
 								return existing;
 							})
 							.orElseGet(() -> Club.builder()
