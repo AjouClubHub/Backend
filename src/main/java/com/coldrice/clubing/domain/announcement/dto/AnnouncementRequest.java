@@ -4,6 +4,7 @@ import com.coldrice.clubing.domain.announcement.entity.AnnouncementCategory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "공지사항 등록 및 수정 요청")
 public record AnnouncementRequest(
@@ -16,7 +17,7 @@ public record AnnouncementRequest(
 	String content,
 
 	@Schema(description = "공지 카테고리", example = "모임, 스터디, 기타")
-	@NotBlank(message = "카테고리 선택은 필수입니다.")
+	@NotNull(message = "카테고리 선택은 필수입니다.")
 	AnnouncementCategory category
-	) {
+) {
 }
