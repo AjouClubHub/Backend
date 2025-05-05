@@ -58,7 +58,10 @@ public enum ExceptionCode {
 	AlREADY_EXPELLED(HttpStatus.BAD_REQUEST, "이미 추방된(혹은 탈퇴한) 회원입니다." ),
 
 	// sms
-	PHONE_MISMATCH(HttpStatus.BAD_REQUEST, "전화번호가 일치하지 않습니다." );
+	PHONE_MISMATCH(HttpStatus.BAD_REQUEST, "전화번호가 일치하지 않습니다." ),
+
+	// Schedule
+	NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "해당 일정을 찾을 수 업습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

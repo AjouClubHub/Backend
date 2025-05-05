@@ -1,5 +1,8 @@
 package com.coldrice.clubing.domain.schedule.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import com.coldrice.clubing.domain.schedule.repository.ScheduleRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,5 +41,44 @@ public class ScheduleService {
 
 		scheduleRepository.save(schedule);
 		return ScheduleResponse.from(schedule);
+	}
+
+	public List<ScheduleResponse> getSchedulesByPeriod(Long clubId, LocalDateTime start, LocalDateTime end) {
+		List<Schedule> schedule = scheduleRepository.findByClubIdAndStartTimeBetween(clubId, start, end);
+		return schedule.stream()
+			.map(ScheduleResponse::from)
+			.toList();
+	}
+
+	public ScheduleResponse getSchedule(Long clubId, Long scheduleId) {
+		Schedule schedule = scheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_SCHEDULE));
+
+		if (!schedule.getClub().getId().equals(clubId)) {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 잘못된 클럽 접근 방지
+		}
+
+		return ScheduleResponse.from(schedule);
+	}
+
+	@Transactional
+	public ScheduleResponse updateSchedule(Long clubId, Long scheduleId, ScheduleRequest request, Member member) {
+		Schedule schedule = scheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_SCHEDULE));
+
+		schedule.getClub().validateManager(member);
+
+		schedule.update(request.title(), request.content(), request.startTime(), request.endTime());
+
+		return ScheduleResponse.from(schedule);
+	}
+
+	public void deleteSchedule(Long clubId, Long scheduleId, Member member) {
+		Schedule schedule = scheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_SCHEDULE));
+
+		schedule.getClub().validateManager(member);
+
+		scheduleRepository.delete(schedule);
 	}
 }

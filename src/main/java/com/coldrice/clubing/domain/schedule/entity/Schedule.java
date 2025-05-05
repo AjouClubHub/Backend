@@ -33,4 +33,11 @@ public class Schedule extends Timestamped {
 	private String content;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
+
+	public void update(String title, String content, LocalDateTime start, LocalDateTime end) {
+		this.title = title;
+		this.content = content;
+		this.startTime = start;
+		this.endTime = end;
+	}
 }
