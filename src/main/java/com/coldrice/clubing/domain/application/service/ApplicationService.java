@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coldrice.clubing.domain.application.dto.ApplicationDetailWrapper;
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
 import com.coldrice.clubing.domain.application.dto.ApplicationResponse;
 import com.coldrice.clubing.domain.application.dto.ClubApplicationDecisonRequest;
@@ -75,6 +76,22 @@ public class ApplicationService {
 		List<Application> applications = applicationRepository.findByClubOrderByStatusAsc(club);
 		return applications.stream()
 			.map(ApplicationResponse::from).toList();
+	}
+
+	public ApplicationDetailWrapper getAllApplicationDetail(Long clubId, Long applicationId, Member member) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		club.validateManager(member);
+
+		Application application = applicationRepository.findById(applicationId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
+
+		if (!application.getClub().getId().equals(clubId)) {
+			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 클럽 불일치 방지
+		}
+
+		return ApplicationDetailWrapper.from(application);
 	}
 
 	// 가입 승인/거절
@@ -161,4 +178,5 @@ public class ApplicationService {
 
 		applicationRepository.delete(application);
 	}
+
 }
