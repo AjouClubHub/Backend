@@ -2,6 +2,7 @@ package com.coldrice.clubing.domain.membership.dto;
 
 import java.time.LocalDateTime;
 
+import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 
 public record ClubMemberResponse(
@@ -9,7 +10,8 @@ public record ClubMemberResponse(
 	String name,
 	String studentId,
 	String major,
-	LocalDateTime joinedAt
+	LocalDateTime joinedAt,
+	MemberRole memberRole
 ) {
 	public static ClubMemberResponse from(Membership membership) {
 		return new ClubMemberResponse(
@@ -17,7 +19,8 @@ public record ClubMemberResponse(
 			membership.getMember().getName(),
 			membership.getMember().getStudentId(),
 			membership.getMember().getMajor(),
-			membership.getJoinedAt()
+			membership.getJoinedAt(),
+			membership.getMember().getMemberRole()
 		);
 	}
 }

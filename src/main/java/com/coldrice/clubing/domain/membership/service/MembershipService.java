@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.announcement.repository.AnnouncementRepository;
+import com.coldrice.clubing.domain.application.entity.Application;
 import com.coldrice.clubing.domain.application.entity.ApplicationStatus;
 import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.domain.membership.dto.ClubMemberApplicationResponse;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.ManagedClubResponse;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
@@ -66,12 +68,24 @@ public class MembershipService {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
-		club.validateManager(member);
+		// club.validateManager(member); 클럽 관리자 검증 삭제
 
 		return membershipRepository.findByClubIdAndStatus(clubId, MembershipStatus.ACTIVE)
 			.stream()
 			.map(ClubMemberResponse::from)
 			.toList();
+	}
+
+	public ClubMemberApplicationResponse getClubMember(Long clubId, Long memberId, Member member) {
+		Club club = clubRepository.findById(clubId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		club.validateManager(member);
+
+		Application application = applicationRepository.findByClubIdAndMemberId(clubId, memberId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
+
+		return ClubMemberApplicationResponse.from(application);
 	}
 
 	@Transactional
