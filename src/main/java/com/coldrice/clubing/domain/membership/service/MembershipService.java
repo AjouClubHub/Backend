@@ -12,7 +12,7 @@ import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
-import com.coldrice.clubing.domain.membership.dto.ClubMemberApplicationResponse;
+import com.coldrice.clubing.domain.membership.dto.ClubMemberDetailWrapper;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.ManagedClubResponse;
 import com.coldrice.clubing.domain.membership.dto.MyClubResponse;
@@ -76,16 +76,20 @@ public class MembershipService {
 			.toList();
 	}
 
-	public ClubMemberApplicationResponse getClubMember(Long clubId, Long memberId, Member member) {
+	public ClubMemberDetailWrapper getClubMember(Long clubId, Long memberId, Member member) {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
 		club.validateManager(member);
 
+		Membership membership = membershipRepository
+			.findByClubIdAndMemberId(clubId, memberId)
+			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_MEMBERSHIP));
+
 		Application application = applicationRepository.findByClubIdAndMemberId(clubId, memberId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
 
-		return ClubMemberApplicationResponse.from(application);
+		return ClubMemberDetailWrapper.of(membership, application);
 	}
 
 	@Transactional

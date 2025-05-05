@@ -42,12 +42,23 @@ public class ApplicationController {
 		return ResponseBodyDto.success("클럽 가입 신청 성공", response);
 	}
 
-	// 클럽 가입 신청 목록 조회
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "클럽 가입 신청 목록 조회", description = "클럽 관리자가 자신의 클럽에 대한 가입 신청 목록을 조회합니다.")
 	@GetMapping("/api/clubs/{clubId}/applications")
 	public ResponseBodyDto<List<ApplicationResponse>> getApplications(
 		@Parameter(description = "가입 신청 목록을 조회할 클럽 ID") @PathVariable Long clubId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		List<ApplicationResponse> response = applicationService.getAllApplications(clubId);
+		return ResponseBodyDto.success("클럽 가입 신청 목록 조회 성공", response);
+	}
+
+	@Secured("ROLE_MANAGER")
+	@Operation(summary = "클럽 가입 신청 단건 조회", description = "클럽 관리자가 자신의 클럽에 대한 가입 신청을 단건 조회합니다.")
+	@GetMapping("/api/clubs/{clubId}/applications/{applicationId}")
+	public ResponseBodyDto<List<ApplicationResponse>> getApplication(
+		@PathVariable Long clubId,
+		@PathVariable Long applicationId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		List<ApplicationResponse> response = applicationService.getAllApplications(clubId);

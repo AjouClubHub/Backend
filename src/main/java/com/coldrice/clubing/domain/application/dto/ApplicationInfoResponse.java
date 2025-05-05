@@ -1,16 +1,16 @@
-package com.coldrice.clubing.domain.membership.dto;
+package com.coldrice.clubing.domain.application.dto;
 
 import com.coldrice.clubing.domain.application.entity.Application;
 
-public record ClubMemberApplicationResponse(
+public record ApplicationInfoResponse(
 	String birthDate,
 	String studentId,
 	String gender,
 	String phoneNumber,
 	String motivation
 ) {
-	public static ClubMemberApplicationResponse from(Application application) {
-		return new ClubMemberApplicationResponse(
+	public static ApplicationInfoResponse from(Application application) {
+		return new ApplicationInfoResponse(
 			application.getBirthDate(),
 			application.getStudentId(),
 			application.getGender(),

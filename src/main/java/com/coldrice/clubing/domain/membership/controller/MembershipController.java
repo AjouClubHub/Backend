@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
-import com.coldrice.clubing.domain.club.entity.Club;
-import com.coldrice.clubing.domain.membership.dto.ClubMemberApplicationResponse;
+import com.coldrice.clubing.domain.membership.dto.ClubMemberDetailWrapper;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberExpelRequest;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.ClubWithdrawRequest;
@@ -72,15 +71,14 @@ public class MembershipController {
 
 	@Operation(summary = "클럽 회원의 가입 신청 정보 단건 조회", description = "클럽 관리자가 자신의 클럽 회원의 가입 신청 정보를 단건 조회합니다.")
 	@GetMapping("/api/clubs/{clubId}/members/{memberId}")
-	public ResponseBodyDto<ClubMemberApplicationResponse> getClubMember(
+	public ResponseBodyDto<ClubMemberDetailWrapper> getClubMember(
 		@PathVariable Long clubId,
 		@PathVariable Long memberId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		ClubMemberApplicationResponse response = membershipService.getClubMember(clubId, memberId, userDetails.getMember());
+		ClubMemberDetailWrapper response = membershipService.getClubMember(clubId, memberId, userDetails.getMember());
 		return ResponseBodyDto.success("클럽 회원 단건 조회 성공", response);
 	}
-
 
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "회원 추방", description = "클럽 관리자가 클럽 회원을 추방합니다.")
