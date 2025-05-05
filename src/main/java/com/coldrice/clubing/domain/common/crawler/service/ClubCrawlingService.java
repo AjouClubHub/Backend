@@ -101,14 +101,15 @@ public class ClubCrawlingService {
 						String imageUrl = null;
 						Matcher matcher = Pattern.compile("url\\('([^']+)'\\)").matcher(style);
 						if (matcher.find()) {
-							imageUrl = "https://www.ajou.ac.kr" + matcher.group(1);
+							String extracted = matcher.group(1);
+							imageUrl = extracted.startsWith("http") ? extracted : "https://www.ajou.ac.kr" + extracted;
 						}
 						final String finalImageUrl = imageUrl;
 
 						Club club = clubRepository.findByName(name)
 							.map(existing -> {
 								existing.updateClubInfo(description, category, contact, location, finalKeyword,
-									finalSns, finalSns);
+									finalSns, finalImageUrl);
 								return existing;
 							})
 							.orElseGet(() -> Club.builder()
