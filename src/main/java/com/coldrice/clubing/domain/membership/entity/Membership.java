@@ -64,4 +64,13 @@ public class Membership extends Timestamped {
 		this.leaveReason = reason;
 		this.leftAt = LocalDateTime.now();
 	}
+
+	public static Membership from(Member member, Club club, MembershipStatus status) {
+		return Membership.builder()
+			.member(member)
+			.club(club)
+			.status(status)
+			.joinedAt(LocalDateTime.now())
+			.build();
+	}
 }

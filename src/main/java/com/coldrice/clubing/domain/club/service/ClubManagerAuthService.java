@@ -7,6 +7,9 @@ import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.common.sms.SmsService;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
+import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
+import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ClubManagerAuthService {
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
+	private final MembershipRepository membershipRepository;
 	private final SmsService smsService;
 
 	public void requestVerification(Long clubId, String phoneNumber) {
@@ -48,5 +52,11 @@ public class ClubManagerAuthService {
 
 		club.updateManager(member);
 		clubRepository.save(club);
+
+		// 클럽 관리자도 가입된 멤버로 등록
+		if (!membershipRepository.existsByClubAndMember(club, member)) {
+			Membership membership = Membership.from(member, club, MembershipStatus.ACTIVE);
+			membershipRepository.save(membership);
+		}
 	}
 }
