@@ -21,6 +21,9 @@ import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.entity.Notification;
+import com.coldrice.clubing.domain.notification.entity.NotificationType;
+import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -33,6 +36,7 @@ public class ApplicationService {
 	private final ClubRepository clubRepository;
 	private final ApplicationRepository applicationRepository;
 	private final MembershipRepository membershipRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Transactional
 	public ApplicationResponse apply(Long clubId, ApplicationRequest request, Member member) {
@@ -119,13 +123,21 @@ public class ApplicationService {
 
 		ApplicationStatus requestedStatus = request.status();
 
-
 		if (requestedStatus == ApplicationStatus.REJECTED) {
 			String reason = request.rejectionReason();
 			if (reason == null || reason.isBlank()) {
 				throw new GlobalException(ExceptionCode.INVALID_REJECTED_REASON);
 			}
 			application.reject(reason); // 상태 + 사유 설정
+
+			// 거절 알림
+			Notification notification = Notification.from(
+				application.getMember(),
+				club.getName() + "에서 가입이 거절되었습니다.",
+				NotificationType.JOIN_REJECTED
+			);
+			notificationRepository.save(notification);
+
 		} else if (requestedStatus == ApplicationStatus.APPROVED) {
 			application.approve(); // 상태만 변경
 
@@ -140,6 +152,15 @@ public class ApplicationService {
 					.build();
 				membershipRepository.save(membership);
 			}
+
+			// 승인 알림
+			Notification notification = Notification.from(
+				application.getMember(),
+				club.getName() + "에서 가입이 승인되었습니다.",
+				NotificationType.JOIN_APPROVED
+			);
+			notificationRepository.save(notification);
+
 		} else {
 			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 에외 케이스 처리
 		}
@@ -156,11 +177,11 @@ public class ApplicationService {
 		Application application = applicationRepository.findById(applicationId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_APPLICATION));
 
-		if(!application.getMember().getId().equals(memberId)) {
+		if (!application.getMember().getId().equals(memberId)) {
 			throw new GlobalException(ExceptionCode.UNAUTHORIZED_REQUEST);
 		}
 
-		if(application.getStatus() != ApplicationStatus.REJECTED) {
+		if (application.getStatus() != ApplicationStatus.REJECTED) {
 			throw new GlobalException(ExceptionCode.APPLICATION_NOT_REJECTED);
 		}
 
