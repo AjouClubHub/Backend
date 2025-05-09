@@ -3,6 +3,7 @@ package com.coldrice.clubing.domain.notification.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
@@ -26,6 +27,7 @@ public class NotificationService {
 			.toList();
 	}
 
+	@Transactional
 	public void markAsRead(Long notificationId, Member member) {
 		Notification notification = notificationRepository.findById(notificationId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_NOTIFICATION));

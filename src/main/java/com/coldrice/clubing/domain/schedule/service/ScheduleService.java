@@ -3,7 +3,6 @@ package com.coldrice.clubing.domain.schedule.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +55,7 @@ public class ScheduleService {
 		List<Notification> notifications = members.stream()
 			.map(m -> Notification.from(
 				m.getMember(),
-				"[일정 등록] '" + schedule.getTitle() + "' 일정이 추가되었습니다.",
+				schedule.getClub().getName() + "에서 '" + schedule.getTitle() + "' 일정이 추가되었습니다.",
 				NotificationType.SCHEDULE_ADDED
 			)).toList();
 
