@@ -12,6 +12,12 @@ import com.coldrice.clubing.domain.announcement.repository.AnnouncementRepositor
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
+import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.entity.Notification;
+import com.coldrice.clubing.domain.notification.entity.NotificationType;
+import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -24,6 +30,8 @@ public class AnnouncementService {
 
 	private final AnnouncementRepository announcementRepository;
 	private final ClubRepository clubRepository;
+	private final MembershipRepository membershipRepository;
+	private NotificationRepository notificationRepository;
 
 	@Transactional
 	public AnnouncementResponse createAnnouncement(Long clubId, @Valid AnnouncementRequest request, Member member) {
@@ -42,11 +50,24 @@ public class AnnouncementService {
 
 		announcementRepository.save(announcement);
 
+		// 알림 생성
+		List<Membership> members = membershipRepository.findByClubIdAndStatus(club.getId(), MembershipStatus.ACTIVE);
+
+		List<Notification> notifications = members.stream()
+			.map(m -> Notification.from(
+				m.getMember(),
+				club.getName() + "에 새로운 공지사항이 등록되었습니다.",
+				NotificationType.NOTICE_CREATED
+			)).toList();
+
+		notificationRepository.saveAll(notifications);
+
 		return AnnouncementResponse.from(announcement);
 	}
 
 	@Transactional
-	public AnnouncementResponse updateAnnouncement(Long clubId, Long announcementId, AnnouncementRequest request, Member member) {
+	public AnnouncementResponse updateAnnouncement(Long clubId, Long announcementId, AnnouncementRequest request,
+		Member member) {
 		Announcement announcement = announcementRepository.findById(announcementId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_ANNOUNCEMENT));
 
@@ -54,7 +75,7 @@ public class AnnouncementService {
 			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 클럽과 공지 불일치
 		}
 
-		if(!announcement.getCreatedBy().equals(member)) {
+		if (!announcement.getCreatedBy().equals(member)) {
 			throw new GlobalException(ExceptionCode.UNAUTHORIZED_MANAGER);
 		}
 
