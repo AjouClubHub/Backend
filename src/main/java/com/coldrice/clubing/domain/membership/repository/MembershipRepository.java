@@ -26,4 +26,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 	List<Membership> findByMemberAndStatus(Member member, MembershipStatus membershipStatus);
 
 	boolean existsByClubAndMember(Club club, Member member);
+
+	List<Membership> findByStatus(MembershipStatus membershipStatus);
 }
