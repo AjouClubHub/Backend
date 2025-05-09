@@ -31,7 +31,7 @@ public class AnnouncementService {
 	private final AnnouncementRepository announcementRepository;
 	private final ClubRepository clubRepository;
 	private final MembershipRepository membershipRepository;
-	private NotificationRepository notificationRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Transactional
 	public AnnouncementResponse createAnnouncement(Long clubId, @Valid AnnouncementRequest request, Member member) {
