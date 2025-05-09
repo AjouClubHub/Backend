@@ -1,13 +1,16 @@
 package com.coldrice.clubing.domain.notification.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
+import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 import com.coldrice.clubing.domain.notification.service.NotificationService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
@@ -38,4 +41,17 @@ public class NoticicationController {
 		notificationService.markAsRead(notificationId, userDetails.getMember());
 		return ResponseBodyDto.success("알림 읽음 처리 완료", null);
 	}
+
+	@Operation(
+		summary = "전체 알림 조회",
+		description = "현재 로그인한 사용자의 모든 알림을 조회합니다. (읽은 + 읽지 않은 알림 포함)"
+	)
+	@GetMapping
+	public ResponseBodyDto<List<NotificationResponse>> getAllNotifications(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		List<NotificationResponse> response = notificationService.getAllNotifications(userDetails.getMember());
+		return ResponseBodyDto.success("알림 전체 조회 성공", response);
+	}
 }
+

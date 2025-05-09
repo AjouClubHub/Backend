@@ -39,4 +39,11 @@ public class NotificationService {
 
 		notification.markAsRead();
 	}
+
+	public List<NotificationResponse> getAllNotifications(Member member) {
+		return notificationRepository.findByReceiverOrderByCreatedAtDesc(member)
+			.stream()
+			.map(NotificationResponse::from)
+			.toList();
+	}
 }
