@@ -1,5 +1,6 @@
 package com.coldrice.clubing.domain.membership.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 	boolean existsByClubAndMember(Club club, Member member);
 
 	List<Membership> findByStatus(MembershipStatus membershipStatus);
+
+	List<Membership> findByStatusAndUpdatedAtBefore(MembershipStatus membershipStatus, LocalDateTime cutoff);
 }
