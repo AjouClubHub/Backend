@@ -21,7 +21,15 @@ public class NoticicationController {
 
 	private final NotificationService notificationService;
 
-	@Operation(summary = "알림 읽음 처리", description = "특정 알림을 읽음 상태로 변경합니다.")
+	@Operation(
+		summary = "알림 읽음 처리",
+		description = """
+			특정 알림을 읽음 상태로 변경합니다.
+			읽음 처리 후 해당 알림은 마이페이지에서 조회되지 않습니다.
+			
+			사용 시점: 알림 클릭 후
+			"""
+	)
 	@PatchMapping("/{notificationId}/read")
 	public ResponseBodyDto<String> markAsRead(
 		@PathVariable Long notificationId,

@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 	private final MemberService memberService;
 
-	@Operation(summary = "마이페이지 조회", description = "회원의 마이페이지 정보를 조회합니다. (회원 정보, 가입 클럽, 가입 신청 현황, 알림 목록 포함)")
+	@Operation(summary = "마이페이지 조회", description = "회원의 마이페이지 정보를 조회합니다. (회원 정보, 가입 클럽, 가입 신청 현황, 읽지 않은 알림 목록)")
 	@GetMapping("/mypage")
 	public ResponseBodyDto<MyPageResponse> getMyPage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Member member = userDetails.getMember();
