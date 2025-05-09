@@ -3,12 +3,19 @@ package com.coldrice.clubing.domain.schedule.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
+import com.coldrice.clubing.domain.membership.entity.Membership;
+import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
+import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.entity.Notification;
+import com.coldrice.clubing.domain.notification.entity.NotificationType;
+import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
 import com.coldrice.clubing.domain.schedule.dto.ScheduleRequest;
 import com.coldrice.clubing.domain.schedule.dto.ScheduleResponse;
 import com.coldrice.clubing.domain.schedule.entity.Schedule;
@@ -16,7 +23,6 @@ import com.coldrice.clubing.domain.schedule.repository.ScheduleRepository;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,11 +31,15 @@ public class ScheduleService {
 
 	private final ClubRepository clubRepository;
 	private final ScheduleRepository scheduleRepository;
+	private final MembershipRepository membershipRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Transactional
 	public ScheduleResponse createSchedule(Long clubId, ScheduleRequest request, Member member) {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+		club.validateManager(member);
 
 		Schedule schedule = Schedule.builder()
 			.club(club)
@@ -40,6 +50,18 @@ public class ScheduleService {
 			.build();
 
 		scheduleRepository.save(schedule);
+
+		// 알림 생성
+		List<Membership> members = membershipRepository.findByClubIdAndStatus(club.getId(), MembershipStatus.ACTIVE);
+		List<Notification> notifications = members.stream()
+			.map(m -> Notification.from(
+				m.getMember(),
+				"[일정 등록] '" + schedule.getTitle() + "' 일정이 추가되었습니다.",
+				NotificationType.SCHEDULE_ADDED
+			)).toList();
+
+		notificationRepository.saveAll(notifications);
+
 		return ScheduleResponse.from(schedule);
 	}
 
