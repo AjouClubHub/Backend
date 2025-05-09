@@ -20,4 +20,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	int countByClubIdAndStatus(Long id, ApplicationStatus applicationStatus);
 
 	Optional<Application> findByClubIdAndMemberId(Long clubId, Long memberId);
+
+	List<Application> findByMember(Member member);
 }
