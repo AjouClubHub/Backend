@@ -15,9 +15,11 @@ import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 import com.coldrice.clubing.domain.notification.entity.Notification;
 import com.coldrice.clubing.domain.notification.entity.NotificationType;
 import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
+import com.coldrice.clubing.domain.notification.service.SseService;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -32,6 +34,7 @@ public class AnnouncementService {
 	private final ClubRepository clubRepository;
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
+	private final SseService sseService;
 
 	@Transactional
 	public AnnouncementResponse createAnnouncement(Long clubId, @Valid AnnouncementRequest request, Member member) {
@@ -61,6 +64,14 @@ public class AnnouncementService {
 			)).toList();
 
 		notificationRepository.saveAll(notifications);
+
+		// SSE 실시간 전송 추가
+		notifications.forEach(notification ->
+			sseService.sendNotification(
+				notification.getReceiver().getId(),
+				NotificationResponse.from(notification)
+			)
+		);
 
 		return AnnouncementResponse.from(announcement);
 	}

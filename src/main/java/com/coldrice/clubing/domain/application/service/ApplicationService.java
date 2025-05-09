@@ -21,9 +21,11 @@ import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 import com.coldrice.clubing.domain.notification.entity.Notification;
 import com.coldrice.clubing.domain.notification.entity.NotificationType;
 import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
+import com.coldrice.clubing.domain.notification.service.SseService;
 import com.coldrice.clubing.exception.customException.GlobalException;
 import com.coldrice.clubing.exception.enums.ExceptionCode;
 
@@ -37,6 +39,7 @@ public class ApplicationService {
 	private final ApplicationRepository applicationRepository;
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
+	private final SseService sseService;
 
 	@Transactional
 	public ApplicationResponse apply(Long clubId, ApplicationRequest request, Member member) {
@@ -138,6 +141,13 @@ public class ApplicationService {
 			);
 			notificationRepository.save(notification);
 
+			// SSE 실시간 전송 추가
+			sseService.sendNotification(
+				notification.getReceiver().getId(),
+				NotificationResponse.from(notification)
+			);
+
+
 		} else if (requestedStatus == ApplicationStatus.APPROVED) {
 			application.approve(); // 상태만 변경
 
@@ -160,6 +170,12 @@ public class ApplicationService {
 				NotificationType.JOIN_APPROVED
 			);
 			notificationRepository.save(notification);
+
+			// SSE 실시간 전송 추가
+			sseService.sendNotification(
+				notification.getReceiver().getId(),
+				NotificationResponse.from(notification)
+			);
 
 		} else {
 			throw new GlobalException(ExceptionCode.INVALID_REQUEST); // 에외 케이스 처리

@@ -12,9 +12,11 @@ import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 import com.coldrice.clubing.domain.notification.entity.Notification;
 import com.coldrice.clubing.domain.notification.entity.NotificationType;
 import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
+import com.coldrice.clubing.domain.notification.service.SseService;
 import com.coldrice.clubing.domain.schedule.dto.ScheduleRequest;
 import com.coldrice.clubing.domain.schedule.dto.ScheduleResponse;
 import com.coldrice.clubing.domain.schedule.entity.Schedule;
@@ -32,6 +34,7 @@ public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
+	private final SseService sseService;
 
 	@Transactional
 	public ScheduleResponse createSchedule(Long clubId, ScheduleRequest request, Member member) {
@@ -60,6 +63,14 @@ public class ScheduleService {
 			)).toList();
 
 		notificationRepository.saveAll(notifications);
+
+		// SSE 실시간 전송 추가
+		notifications.forEach(notification ->
+			sseService.sendNotification(
+				notification.getReceiver().getId(),
+				NotificationResponse.from(notification)
+			)
+		);
 
 		return ScheduleResponse.from(schedule);
 	}

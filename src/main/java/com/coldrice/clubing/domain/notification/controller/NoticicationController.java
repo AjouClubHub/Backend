@@ -2,16 +2,19 @@ package com.coldrice.clubing.domain.notification.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 import com.coldrice.clubing.domain.notification.service.NotificationService;
+import com.coldrice.clubing.domain.notification.service.SseService;
 import com.coldrice.clubing.util.ResponseBodyDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/notifications")
 public class NoticicationController {
 
+	private final SseService sseService;
 	private final NotificationService notificationService;
 
 	@Operation(
@@ -52,6 +56,11 @@ public class NoticicationController {
 	) {
 		List<NotificationResponse> response = notificationService.getAllNotifications(userDetails.getMember());
 		return ResponseBodyDto.success("알림 전체 조회 성공", response);
+	}
+
+	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public SseEmitter subscribe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return sseService.connect(userDetails.getMember().getId());
 	}
 }
 
