@@ -1,4 +1,4 @@
-package com.coldrice.clubing.domain.recruitment.controller;
+package com.coldrice.clubing.domain.scheduler;
 
 import java.time.LocalDate;
 import java.util.List;
