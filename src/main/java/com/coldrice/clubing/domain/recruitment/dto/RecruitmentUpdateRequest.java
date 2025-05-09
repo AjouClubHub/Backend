@@ -13,6 +13,9 @@ public record RecruitmentUpdateRequest(
 	@Schema(description = "모집 요건", example = "기초 Java 가능자 / 2학년 이상")
 	String requirements,
 
+	@Schema(description = "상시 모집 여부", example = "false")
+	Boolean alwaysOpen,
+
 	@Schema(description = "시작일", example = "2025-04-10")
 	@FutureOrPresent
 	LocalDate startDate,

@@ -48,6 +48,8 @@ public class Recruitment extends Timestamped {
 
 	private String title;
 
+	private boolean alwaysOpen;
+
 	public void update(String title, String requirements, LocalDate startDate, LocalDate endDate) {
 		this.title = title;
 		this.requirements = requirements;

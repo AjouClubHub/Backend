@@ -17,13 +17,14 @@ public record RecruitmentRequest(
 	@NotBlank(message = "모집 요건은 필수입니다.")
 	String requirements,
 
+	@Schema(description = "상시 모집 여부", example = "false")
+	boolean alwaysOpen,
+
 	@Schema(description = "시작일", example = "2025-04-10")
-	@NotNull(message = "모집 시작일은 필수입니다.")
 	@FutureOrPresent
 	LocalDate startDate,
 
 	@Schema(description = "마감일", example = "2025-04-30")
-	@NotNull(message = "모집 마감일은 필수입니다.")
 	@FutureOrPresent
 	LocalDate endDate
 ) {

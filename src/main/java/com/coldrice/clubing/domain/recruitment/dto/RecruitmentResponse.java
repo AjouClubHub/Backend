@@ -9,6 +9,7 @@ public record RecruitmentResponse(
 	String clubName,
 	String title,
 	String requirements,
+	boolean alwaysOpen,
 	LocalDate startDate,
 	LocalDate endDate
 ) {
@@ -18,6 +19,7 @@ public record RecruitmentResponse(
 			recruitment.getClub().getName(),
 			recruitment.getTitle(),
 			recruitment.getRequirements(),
+			recruitment.isAlwaysOpen(),
 			recruitment.getStartDate(),
 			recruitment.getEndDate()
 		);

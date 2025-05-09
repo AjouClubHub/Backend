@@ -9,6 +9,6 @@ public enum RecruitmentStatus {
 		return Arrays.stream(RecruitmentStatus.values())
 			.filter(r -> r.name().equalsIgnoreCase(role))
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 MemberRole"));
+			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 스테이터스"));
 	}
 }
