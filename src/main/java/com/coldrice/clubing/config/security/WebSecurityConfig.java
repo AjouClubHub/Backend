@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.filter.JwtAuthenticationFilter;
@@ -34,6 +35,7 @@ public class WebSecurityConfig {
 	private final UserDetailsServiceImpl userDetailsService;
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final MemberRepository memberRepository;
+	private final CorsConfigurationSource corsConfigurationSource;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -66,6 +68,9 @@ public class WebSecurityConfig {
 		http.sessionManagement((sessionManagement) ->
 			sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		);
+
+		// 🔹 CORS 설정 적용
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
 
 		http.authorizeHttpRequests((authorizeHttpRequests) ->
 			authorizeHttpRequests
