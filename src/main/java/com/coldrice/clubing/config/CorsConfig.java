@@ -15,10 +15,9 @@ public class CorsConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOriginPatterns(List.of(
+		config.setAllowedOrigins(List.of(
 			"http://localhost:5173",
-			"https://*.kyoungttas-projects.vercel.app", // 배포된 프론트
-			"https://www.clubing.site"
+			"https://clubing.vercel.app" // 배포된 프론트
 		));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
 		config.setAllowedHeaders(List.of("*"));
