@@ -17,7 +17,7 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(List.of(
 			"http://localhost:5173",
-			"https://clubing.vercel.app" // 배포된 프론트
+			"https://www.ajouclub.site" // 배포된 프론트
 		));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
 		config.setAllowedHeaders(List.of("*"));
