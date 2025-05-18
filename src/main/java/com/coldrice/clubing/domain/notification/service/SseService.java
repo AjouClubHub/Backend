@@ -73,6 +73,7 @@ public class SseService {
 				while(true) {
 					Thread.sleep(30000); // 30초
 					emitter.send(SseEmitter.event().comment("heartbeat")); // 30초마다 빈 주석 전송
+					log.info("Heartbeat sent to memberId={}", memberId);
 				}
 			} catch (Exception e) {
 				emitterMap.remove(memberId); // 클라이언트가 끊긴 경우 정리
