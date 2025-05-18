@@ -71,11 +71,14 @@ public class SseService {
 		new Thread(() -> {
 			try {
 				while(true) {
-					Thread.sleep(30000); // 30초
-					emitter.send(SseEmitter.event().comment("heartbeat")); // 30초마다 빈 주석 전송
+					Thread.sleep(30000); // 30초 주기
+					emitter.send(SseEmitter.event()
+						.name("heartbeat") // 클라이언트에서 직접 수신할 수 있도록
+						.data("ping"));
 					log.info("Heartbeat sent to memberId={}", memberId);
 				}
 			} catch (Exception e) {
+				log.warn("Heartbeat thread 종료: memberId={}, reason={}", memberId, e.getMessage());
 				emitterMap.remove(memberId); // 클라이언트가 끊긴 경우 정리
 			}
 		}).start();
