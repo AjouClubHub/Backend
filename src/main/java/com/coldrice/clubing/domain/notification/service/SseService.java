@@ -33,6 +33,9 @@ public class SseService {
 			emitterMap.remove(memberId);
 		}
 
+		// 주기적인 heartbeat 메세지 전송
+		startHeartbeat(emitter,memberId);
+
 		return emitter;
 	}
 
@@ -47,5 +50,18 @@ public class SseService {
 				emitterMap.remove(memberId);
 			}
 		}
+	}
+
+	private void startHeartbeat(SseEmitter emitter, Long memberId) {
+		new Thread(() -> {
+			try {
+				while(true) {
+					Thread.sleep(30000); // 30초
+					emitter.send(SseEmitter.event().comment("heartbeat")); // 주석 전송
+				}
+			} catch (Exception e) {
+				emitterMap.remove(memberId); // 클라이언트가 끊긴 경우 정리
+			}
+		}).start();
 	}
 }
