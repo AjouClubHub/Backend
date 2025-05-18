@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class SseService {
 
 	private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
-	private static final Long TIMEOUT = 60L * 1000 * 10; // 10분
+	private static final Long TIMEOUT = 0L; // 연결 무제한 유지
 
 	public SseEmitter connect(Long memberId) {
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
@@ -57,7 +57,7 @@ public class SseService {
 			try {
 				while(true) {
 					Thread.sleep(30000); // 30초
-					emitter.send(SseEmitter.event().comment("heartbeat")); // 주석 전송
+					emitter.send(SseEmitter.event().comment("heartbeat")); // 30초마다 빈 주석 전송
 				}
 			} catch (Exception e) {
 				emitterMap.remove(memberId); // 클라이언트가 끊긴 경우 정리
