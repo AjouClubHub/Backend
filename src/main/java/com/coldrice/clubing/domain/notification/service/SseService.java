@@ -10,7 +10,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.coldrice.clubing.domain.notification.dto.NotificationResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SseService {
@@ -19,17 +21,30 @@ public class SseService {
 	private static final Long TIMEOUT = 0L; // 연결 무제한 유지
 
 	public SseEmitter connect(Long memberId) {
+		log.info("SSE 연결 요청 수신: memberId={}", memberId);
+
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
 		emitterMap.put(memberId, emitter);
 
-		emitter.onCompletion(() -> emitterMap.remove(memberId));
-		emitter.onTimeout(() -> emitterMap.remove(memberId));
-		emitter.onError((e) -> emitterMap.remove(memberId));
+		emitter.onCompletion(() -> {
+			log.info("SSE 연결 종료됨: memberId={}", memberId);
+			emitterMap.remove(memberId);
+		});
+		emitter.onTimeout(() -> {
+			log.info("SSE 연결 타임아웃: memberId={}", memberId);
+			emitterMap.remove(memberId);
+		});
+		emitter.onError((e) -> {
+			log.error("SSE 에러 발생: {}", e.getMessage());
+			emitterMap.remove(memberId);
+		});
 
 		// 더미 데이터 전송 (연결 확인용)
 		try {
 			emitter.send(SseEmitter.event().name("connect").data("connected"));
+			log.info("연결 이벤트 전송 완료");
 		} catch (IOException e) {
+			log.error("연결 이벤트 전송 실패: {}", e.getMessage());
 			emitterMap.remove(memberId);
 		}
 
