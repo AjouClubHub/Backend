@@ -19,7 +19,7 @@ public class EmailService {
 		message.setTo(to);
 		message.setSubject(subject);
 		message.setText(content);
-		message.setFrom("admin@clubing.site");
+		message.setFrom("coldrice99@gmail.com");
 		mailSender.send(message);
 	}
 
