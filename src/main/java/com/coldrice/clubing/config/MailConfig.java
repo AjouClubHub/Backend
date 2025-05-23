@@ -25,7 +25,7 @@ public class MailConfig {
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.smtp.auth", true);
 		props.put("mail.smtp.starttls.enable", true);
-		props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		props.put("mail.smtp.ssl.trust", "email-smtp.ap-northeast-2.amazonaws.com");
 
 		return mailSender;
 	}
