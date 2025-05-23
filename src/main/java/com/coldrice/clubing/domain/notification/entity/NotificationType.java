@@ -6,7 +6,8 @@ public enum NotificationType {
 	JOIN_APPROVED,
 	JOIN_REJECTED,
 	NOTICE_CREATED,
-	SCHEDULE_ADDED;
+	SCHEDULE_ADDED,
+	JOIN_REQUESTED;
 
 	public static NotificationType of(String role) {
 		return Arrays.stream(NotificationType.values())

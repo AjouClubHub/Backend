@@ -73,6 +73,21 @@ public class ApplicationService {
 			.build();
 
 		applicationRepository.save(application);
+
+		// 클럽 관리자 알림 생성
+		Member manager = club.getManager();
+		Notification notification = Notification.from(manager,
+			application.getMember().getName() + "님이 " + club.getName() + "에 가입 신청했습니다.",
+			NotificationType.JOIN_REQUESTED);
+
+		notificationRepository.save(notification);
+
+		// SSE 실시간 전송 추가
+		sseService.sendNotification(
+			notification.getReceiver().getId(),
+			NotificationResponse.from(notification)
+		);
+
 		return ApplicationResponse.from(application);
 	}
 
@@ -146,7 +161,6 @@ public class ApplicationService {
 				notification.getReceiver().getId(),
 				NotificationResponse.from(notification)
 			);
-
 
 		} else if (requestedStatus == ApplicationStatus.APPROVED) {
 			application.approve(); // 상태만 변경
