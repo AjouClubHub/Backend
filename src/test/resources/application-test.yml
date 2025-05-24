@@ -17,7 +17,7 @@ spring:
 
 jwt:
   secret:
-    key: dGVzdC1kdW1teQ==
+    key: bXlzZWNyZXRqd3RzaWduYXR1cmVrZXlmb3J0ZXN0aW5nc3ByaW5nYm9vdA==
 
 coolsms:
   api:
