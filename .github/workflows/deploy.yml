@@ -1,0 +1,42 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # 또는 배포 브랜치
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17 for Build
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (include tests)
+        run: ./gradlew clean build
+
+      - name: Decode EC2 private key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" | base64 -d > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+      - name: eploy to EC2 (scp + ssh)
+        run: |
+          scp -i ec2-key.pem -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/build/libs/
+          ssh -i ec2-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            pkill -f 'clubing-0.0.1-SNAPSHOT.jar' || true
+            nohup java -jar /home/${{ secrets.EC2_USER }}/build/libs/clubing-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/log.txt 2>&1 &
+          EOF
+
+      - name: Workflow 완료 로그
+        run: echo "Github Actions 배포 워크플로우 완료"

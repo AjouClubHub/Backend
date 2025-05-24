@@ -47,12 +47,6 @@ public class ClubFlowIntegrationTest {
 	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
-	JwtUtil jwtUtil;
-	@Autowired
-	private MemberRepository memberRepository;
-	@Autowired
-	private ClubRepository clubRepository;
-	@Autowired
 	private ApplicationRepository applicationRepository;
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
