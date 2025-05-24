@@ -14,29 +14,3 @@ spring:
   sql:
     init:
       mode: always
-
-jwt:
-  secret:
-    key: bXlzZWNyZXRqd3RzaWduYXR1cmVrZXlmb3J0ZXN0aW5nc3ByaW5nYm9vdA==
-
-coolsms:
-  api:
-    key: dummy
-    secret: dummy
-  sender:
-    phone: 01012345678
-
-mail:
-  host: dummy
-  port: 587
-  username: dummy
-  password: dummy
-  properties:
-    mail:
-      smtp:
-        auth: true
-        starttls:
-          enable: true
-          required: true
-        ssl:
-          trust: dummy
