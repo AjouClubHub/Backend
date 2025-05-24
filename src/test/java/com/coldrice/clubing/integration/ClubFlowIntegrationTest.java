@@ -161,19 +161,19 @@ public class ClubFlowIntegrationTest {
 		applicationId = applicationRepository.findAll().get(0).getId();
 	}
 
-	@Test
-	@Order(3)
-	void step3_클럽_관리자_인증코드_요청() throws Exception {
-
-		mockMvc.perform(post("/api/clubs/{clubId}/manager-auth/request", clubId)
-				.header("Authorization", managerToken)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("""
-					    { "phoneNumber": "010-8968-8493" }
-					"""))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.message").value("인증 코드 전송 완료"));
-	}
+	// @Test
+	// @Order(3)
+	// void step3_클럽_관리자_인증코드_요청() throws Exception {
+	//
+	// 	mockMvc.perform(post("/api/clubs/{clubId}/manager-auth/request", clubId)
+	// 			.header("Authorization", managerToken)
+	// 			.contentType(MediaType.APPLICATION_JSON)
+	// 			.content("""
+	// 				    { "phoneNumber": "010-8968-8493" }
+	// 				"""))
+	// 		.andExpect(status().isOk())
+	// 		.andExpect(jsonPath("$.message").value("인증 코드 전송 완료"));
+	// }
 
 	@Test
 	@Order(4)

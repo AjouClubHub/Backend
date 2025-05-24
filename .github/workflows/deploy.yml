@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # 또는 배포 브랜치
+      - main
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17 for Build
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -22,21 +22,36 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Build with Gradle (include tests)
-        run: ./gradlew clean build
+      - name: Install and start Redis
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-server
+          sudo systemctl start redis-server
+          redis-cli ping
+
+      - name: 🧱 Install and start Redis
+        run: |
+            sudo apt-get update
+              sudo apt-get install -y redis-server
+              sudo systemctl start redis-server
+              redis-cli ping
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
 
       - name: Decode EC2 private key
         run: |
           echo "${{ secrets.EC2_KEY }}" | base64 -d > ec2-key.pem
           chmod 600 ec2-key.pem
 
-      - name: eploy to EC2 (scp + ssh)
+      - name: Deploy to EC2
         run: |
-          scp -i ec2-key.pem -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/build/libs/
-          ssh -i ec2-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          scp -i ec2-key.pem -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Backend/build/libs/
+          ssh -i ec2-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            cd /home/${{ secrets.EC2_USER }}/Backend
             pkill -f 'clubing-0.0.1-SNAPSHOT.jar' || true
-            nohup java -jar /home/${{ secrets.EC2_USER }}/build/libs/clubing-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/log.txt 2>&1 &
+            nohup java -jar build/libs/clubing-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
           EOF
-
-      - name: Workflow 완료 로그
-        run: echo "Github Actions 배포 워크플로우 완료"
