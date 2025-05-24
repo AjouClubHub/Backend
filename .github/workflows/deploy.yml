@@ -19,35 +19,30 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Grant execute permission for Gradle
+      - name: ⚙️ Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Install and start Redis
+      - name: 🚀 Install and start Redis
         run: |
           sudo apt-get update
           sudo apt-get install -y redis-server
           sudo systemctl start redis-server
+          sleep 2
           redis-cli ping
 
-      - name: 🧱 Install and start Redis
-        run: |
-            sudo apt-get update
-              sudo apt-get install -y redis-server
-              sudo systemctl start redis-server
-              redis-cli ping
+      - name: 🧪 Run tests with test profile
+        run: ./gradlew test -Dspring.profiles.active=test \
+          -Dspring.config.location=src/test/resources/application-test.yml
 
-      - name: Run tests with test profile
-        run: ./gradlew test -Dspring.profiles.active=test
-
-      - name: Build with Gradle
+      - name: 🛠️ Build with Gradle (skip tests)
         run: ./gradlew clean build -x test
 
-      - name: Decode EC2 private key
+      - name: 🔓 Decode EC2 private key
         run: |
           echo "${{ secrets.EC2_KEY }}" | base64 -d > ec2-key.pem
           chmod 600 ec2-key.pem
 
-      - name: Deploy to EC2
+      - name: 📦 Deploy to EC2
         run: |
           scp -i ec2-key.pem -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/Backend/build/libs/
           ssh -i ec2-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
