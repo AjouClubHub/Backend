@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: YML # LOCAL_YML, SECRET_YML 시크릿 접근 위해 지정
 
     steps:
       - name: Checkout source code
@@ -30,11 +31,16 @@ jobs:
           sleep 2
           redis-cli ping
 
-      - name: 🧪 Run tests with test profile
+      - name: 🔐 Restore application-local.yml
         run: |
-          ./gradlew test \
-            -Dspring.profiles.active=test \
-            -Dspring.config.location=src/test/resources/application-test.yml
+          echo "${{ secrets.LOCAL_YML }}" | base64 --decode > src/main/resources/application-local.yml
+
+      - name: 🔐 Restore application-secret.yml
+        run: |
+          echo "${{ secrets.SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
+
+      - name: 🧪 Run tests with test profile
+        run: ./gradlew test -Dspring.profiles.active=test
 
       - name: 🛠️ Build with Gradle (skip tests)
         run: ./gradlew clean build -x test
