@@ -15,28 +15,28 @@ spring:
     init:
       mode: always
 
-  jwt:
-    secret:
-      key: test-dummy
+jwt:
+  secret:
+    key: test-dummy
 
-  coolsms:
-    api:
-      key: dummy
-      secret: dummy
-    sender:
-      phone: 01089688493
+coolsms:
+  api:
+    key: dummy
+    secret: dummy
+  sender:
+    phone: 01012345678
 
-  mail:
-    host: dummy
-    port: 587
-    username: dummy
-    password: dummy
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          ssl:
-            trust: dummy
+mail:
+  host: dummy
+  port: 587
+  username: dummy
+  password: dummy
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+          required: true
+        ssl:
+          trust: dummy
