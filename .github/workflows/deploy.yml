@@ -36,8 +36,8 @@ jobs:
               sudo systemctl start redis-server
               redis-cli ping
 
-      - name: Run tests
-        run: ./gradlew test
+      - name: Run tests with test profile
+        run: ./gradlew test -Dspring.profiles.active=test
 
       - name: Build with Gradle
         run: ./gradlew clean build -x test
