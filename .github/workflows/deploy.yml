@@ -39,8 +39,11 @@ jobs:
         run: |
           echo "${{ secrets.SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
 
+      - name: Set Spring profile for test
+        run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
+
       - name: 🧪 Run tests with test profile
-        run: ./gradlew test -Dspring.profiles.active=test
+        run: ./gradlew test
 
       - name: 🛠️ Build with Gradle (skip tests)
         run: ./gradlew clean build -x test

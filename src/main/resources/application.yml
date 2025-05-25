@@ -3,8 +3,8 @@ spring:
     name: clubing
 
   profiles:
-    active: local       # ?? ?? ?? ???
-    include: secret     # ?? ??? ?? ??
+    active: ${SPRING_PROFILES_ACTIVE:local}
+    include: ${SPRING_PROFILES_INCLUDE:secret}
 
   jpa:
     hibernate:
