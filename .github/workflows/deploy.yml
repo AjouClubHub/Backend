@@ -60,4 +60,4 @@ jobs:
             cd /home/${{ secrets.EC2_USER }}/Backend
             pkill -f 'clubing-0.0.1-SNAPSHOT.jar' || true
             nohup java -jar build/libs/clubing-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
-          EOF
+          EOF 
