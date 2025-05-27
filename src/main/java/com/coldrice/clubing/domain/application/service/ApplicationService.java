@@ -2,9 +2,15 @@ package com.coldrice.clubing.domain.application.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.coldrice.clubing.domain.application.dto.ApplicationDetailWrapper;
 import com.coldrice.clubing.domain.application.dto.ApplicationRequest;
@@ -40,55 +46,79 @@ public class ApplicationService {
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
 	private final SseService sseService;
+	private final RedissonClient redissonClient;
 
 	@Transactional
 	public ApplicationResponse apply(Long clubId, ApplicationRequest request, Member member) {
-		Club club = clubRepository.findById(clubId)
-			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+		String lockKey = "club:apply:" + clubId;
+		RLock lock = redissonClient.getFairLock(lockKey);
 
-		// 중복 신청 체크
-		if (applicationRepository.existsByClubAndMember(club, member)) {
-			throw new GlobalException(ExceptionCode.DUPLICATE_APPLICATION);
-		}
-
-		// 클럽의 전공 제한 조건 확인
-		List<RequiredMajor> requiredMajors = club.getRequiredMajors();
-		if (!requiredMajors.isEmpty()) {
-			RequiredMajor applicantMajor = RequiredMajor.valueOf(member.getMajor());
-			if (!requiredMajors.contains(applicantMajor)) {
-				throw new GlobalException(ExceptionCode.MAJOR_REQUIREMENT_NOT_MET);
+		try {
+			if (!lock.tryLock(1, 10, TimeUnit.SECONDS)) {
+				throw new GlobalException(ExceptionCode.LOCK_FAILED);
 			}
+
+			Club club = clubRepository.findById(clubId)
+				.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+
+			// 중복 신청 체크
+			if (applicationRepository.existsByClubAndMember(club, member)) {
+				throw new GlobalException(ExceptionCode.DUPLICATE_APPLICATION);
+			}
+
+			// 클럽의 전공 제한 조건 확인
+			List<RequiredMajor> requiredMajors = club.getRequiredMajors();
+			if (!requiredMajors.isEmpty()) {
+				RequiredMajor applicantMajor = RequiredMajor.valueOf(member.getMajor());
+				if (!requiredMajors.contains(applicantMajor)) {
+					throw new GlobalException(ExceptionCode.MAJOR_REQUIREMENT_NOT_MET);
+				}
+			}
+
+			Application application = Application.builder()
+				.club(club)
+				.member(member)
+				.status(ApplicationStatus.PENDING)
+				.birthDate(request.birthDate())
+				.studentId(request.studentId())
+				.major(member.getMajor())
+				.gender(request.gender())
+				.phoneNumber(request.phoneNumber())
+				.motivation(request.motivation())
+				.build();
+
+			applicationRepository.save(application);
+
+			// 클럽 관리자 알림 생성
+			Member manager = club.getManager();
+			Notification notification = Notification.from(manager,
+				application.getMember().getName() + "님이 " + club.getName() + "에 가입 신청했습니다.",
+				NotificationType.JOIN_REQUESTED);
+
+			notificationRepository.save(notification);
+
+			// SSE 실시간 전송 추가
+			sseService.sendNotification(
+				notification.getReceiver().getId(),
+				NotificationResponse.from(notification)
+			);
+
+			return ApplicationResponse.from(application);
+		} catch(InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException("락 획득 중 인터럽트 발생", e);
+
+		} finally {
+			// 트랜잭션이 끝난 후에 락 해제
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+				@Override
+				public void afterCompletion(int status) {
+					if (lock.isHeldByCurrentThread()) {
+						lock.unlock();
+					}
+				}
+			});
 		}
-
-		Application application = Application.builder()
-			.club(club)
-			.member(member)
-			.status(ApplicationStatus.PENDING)
-			.birthDate(request.birthDate())
-			.studentId(request.studentId())
-			.major(member.getMajor())
-			.gender(request.gender())
-			.phoneNumber(request.phoneNumber())
-			.motivation(request.motivation())
-			.build();
-
-		applicationRepository.save(application);
-
-		// 클럽 관리자 알림 생성
-		Member manager = club.getManager();
-		Notification notification = Notification.from(manager,
-			application.getMember().getName() + "님이 " + club.getName() + "에 가입 신청했습니다.",
-			NotificationType.JOIN_REQUESTED);
-
-		notificationRepository.save(notification);
-
-		// SSE 실시간 전송 추가
-		sseService.sendNotification(
-			notification.getReceiver().getId(),
-			NotificationResponse.from(notification)
-		);
-
-		return ApplicationResponse.from(application);
 	}
 
 	public List<ApplicationResponse> getAllApplications(Long clubId) {
