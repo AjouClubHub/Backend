@@ -15,6 +15,7 @@ import com.coldrice.clubing.domain.announcement.dto.AnnouncementRequest;
 import com.coldrice.clubing.domain.announcement.entity.AnnouncementCategory;
 import com.coldrice.clubing.domain.announcement.repository.AnnouncementRepository;
 import com.coldrice.clubing.domain.announcement.service.AnnouncementService;
+import com.coldrice.clubing.domain.application.repository.ApplicationRepository;
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.entity.ClubStatus;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
@@ -57,8 +58,12 @@ public class NotificationConcurrencyTest {
 	@Autowired
 	private ScheduleRepository scheduleRepository;
 
+	@Autowired
+	private ApplicationRepository applicationRepository;
+
 	private Member manager;
 	private Club club;
+
 
 	@BeforeEach
 	void setup() {
@@ -67,6 +72,7 @@ public class NotificationConcurrencyTest {
 		announcementRepository.deleteAll();
 		scheduleRepository.deleteAll();
 		membershipRepository.deleteAll();
+		applicationRepository.deleteAll();
 		clubRepository.deleteAll();
 		memberRepository.deleteAll();
 
