@@ -59,5 +59,6 @@ jobs:
           ssh -i ec2-key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             cd /home/${{ secrets.EC2_USER }}/Backend
             pkill -f 'clubing-0.0.1-SNAPSHOT.jar' || true
+            while lsof -i:8080 >/dev/null 2>&1; do sleep 1; done
             nohup java -jar build/libs/clubing-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
           EOF
