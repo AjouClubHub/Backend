@@ -55,7 +55,7 @@ public class NotificationConcurrencyTest {
 	private AnnouncementRepository announcementRepository;
 
 	@Autowired
-	ScheduleRepository scheduleRepository;
+	private ScheduleRepository scheduleRepository;
 
 	private Member manager;
 	private Club club;

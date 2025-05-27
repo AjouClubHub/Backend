@@ -26,6 +26,8 @@ import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
+import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
+import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -42,8 +44,16 @@ public class ApplyConcurrencyTest {
 	@Autowired
 	private ApplicationRepository applicationRepository;
 
+	@Autowired
+	private MembershipRepository membershipRepository;
+
+	@Autowired
+	private NotificationRepository notificationRepository;
+
 	@BeforeEach
 	void setup() {
+		notificationRepository.deleteAll();
+		memberRepository.deleteAll();
 		applicationRepository.deleteAll();
 		clubRepository.deleteAll();
 		memberRepository.deleteAll();
