@@ -127,7 +127,7 @@ public class ClubController {
 		return ResponseBodyDto.success("클럽 관리자 인증 완료");
 	}
 
-	@Operation(summary = "클럽 검색", description = "카테고리, 키워드, 이름 등 조겅을 통해 클럽을 검색합니다.")
+	@Operation(summary = "클럽 검색", description = "카테고리, 키워드, 이름 등 조건을 통해 클럽을 검색합니다.")
 	@GetMapping("/api/clubs/search")
 	public ResponseBodyDto<List<ClubResponse>> searchClubs(
 		@ModelAttribute ClubSearchRequest request
