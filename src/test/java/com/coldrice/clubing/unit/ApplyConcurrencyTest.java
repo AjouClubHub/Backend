@@ -26,11 +26,10 @@ import com.coldrice.clubing.domain.club.repository.ClubRepository;
 import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
-import com.coldrice.clubing.exception.customException.GlobalException;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class ConcurrencyTest {
+public class ApplyConcurrencyTest {
 	@Autowired
 	private ApplicationService applicationService;
 

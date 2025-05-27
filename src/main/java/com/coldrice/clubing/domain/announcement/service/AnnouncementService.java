@@ -1,9 +1,14 @@
 package com.coldrice.clubing.domain.announcement.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.coldrice.clubing.domain.announcement.dto.AnnouncementRequest;
 import com.coldrice.clubing.domain.announcement.dto.AnnouncementResponse;
@@ -35,6 +40,7 @@ public class AnnouncementService {
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
 	private final SseService sseService;
+	private final RedissonClient redissonClient;
 
 	@Transactional
 	public AnnouncementResponse createAnnouncement(Long clubId, @Valid AnnouncementRequest request, Member member) {
@@ -53,25 +59,48 @@ public class AnnouncementService {
 
 		announcementRepository.save(announcement);
 
-		// 알림 생성
-		List<Membership> members = membershipRepository.findByClubIdAndStatus(club.getId(), MembershipStatus.ACTIVE);
+		// 락 처리 시작
+		String lockKey = "notice:club:" + club.getId();
+		RLock lock = redissonClient.getLock(lockKey);
 
-		List<Notification> notifications = members.stream()
-			.map(m -> Notification.from(
-				m.getMember(),
-				club.getName() + "에 새로운 공지사항이 등록되었습니다.",
-				NotificationType.NOTICE_CREATED
-			)).toList();
+		try {
+			if (!lock.tryLock(1, 5, TimeUnit.SECONDS)) {
+				throw new GlobalException(ExceptionCode.LOCK_FAILED);
+			}
 
-		notificationRepository.saveAll(notifications);
+			// 알림 생성
+			List<Membership> members = membershipRepository.findByClubIdAndStatus(club.getId(),
+				MembershipStatus.ACTIVE);
 
-		// SSE 실시간 전송 추가
-		notifications.forEach(notification ->
-			sseService.sendNotification(
-				notification.getReceiver().getId(),
-				NotificationResponse.from(notification)
-			)
-		);
+			List<Notification> notifications = members.stream()
+				.map(m -> Notification.from(
+					m.getMember(),
+					club.getName() + "에 새로운 공지사항이 등록되었습니다.",
+					NotificationType.NOTICE_CREATED
+				)).toList();
+
+			notificationRepository.saveAll(notifications);
+
+			// SSE 실시간 전송 추가
+			notifications.forEach(notification ->
+				sseService.sendNotification(
+					notification.getReceiver().getId(),
+					NotificationResponse.from(notification)
+				)
+			);
+
+		} catch(InterruptedException e) {
+			throw new IllegalStateException("공지 알림 락 획득 중 인터럽트 발생", e);
+		} finally {
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+				@Override
+				public void afterCompletion(int status) {
+					if (lock.isHeldByCurrentThread()) {
+						lock.unlock();
+					}
+				}
+			});
+		}
 
 		return AnnouncementResponse.from(announcement);
 	}
