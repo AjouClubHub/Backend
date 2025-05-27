@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class ClubCrawlingService {
 
 	@Transactional
 	@Scheduled(cron = "0 0 0 */3 * *") // 매 3일마다 00시 00분에 실행
+	@CacheEvict(value = "clubSearch", allEntries = true) // 캐시 삭제
 	public void crawlAndSaveClubs() {
 		Map<String, ClubCategory> categoryMap = Map.of(
 			"club_list01.do", ClubCategory.과학기술분과,

@@ -2,6 +2,7 @@ package com.coldrice.clubing.domain.club.service;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,6 +98,7 @@ public class ClubService {
 			.toList();
 	}
 
+	@Cacheable(value = "clubSearch", key = "#request")
 	public List<ClubResponse> searchClubs(ClubSearchRequest request) {
 		List<Club> clubs = clubRepository.findAll(ClubSpecification.search(request));
 		return clubs.stream().map(ClubResponse::from).toList();
