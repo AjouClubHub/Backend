@@ -3,6 +3,7 @@ package com.coldrice.clubing.domain.common.sms;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ public class SmsService {
 	private final SmsSender smsSender;
 	private final RedisTemplate<String, String> redisTemplate;
 
+	@Async
 	public void sendVerificationCode(String phoneNumber) {
 
 		// 인증코드 생성 및 저장 (Redis)
