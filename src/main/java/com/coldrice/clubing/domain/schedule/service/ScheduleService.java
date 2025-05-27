@@ -2,9 +2,14 @@ package com.coldrice.clubing.domain.schedule.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.coldrice.clubing.domain.club.entity.Club;
 import com.coldrice.clubing.domain.club.repository.ClubRepository;
@@ -35,6 +40,7 @@ public class ScheduleService {
 	private final MembershipRepository membershipRepository;
 	private final NotificationRepository notificationRepository;
 	private final SseService sseService;
+	private final RedissonClient redissonClient;
 
 	@Transactional
 	public ScheduleResponse createSchedule(Long clubId, ScheduleRequest request, Member member) {
@@ -64,13 +70,34 @@ public class ScheduleService {
 
 		notificationRepository.saveAll(notifications);
 
-		// SSE 실시간 전송 추가
-		notifications.forEach(notification ->
-			sseService.sendNotification(
-				notification.getReceiver().getId(),
-				NotificationResponse.from(notification)
-			)
-		);
+		// 락 시작
+		String lockKey = "notification:club:" + clubId;
+		RLock lock = redissonClient.getLock(lockKey);
+
+		try {
+			if (!lock.tryLock(1, 10, TimeUnit.SECONDS)) {
+				throw new GlobalException(ExceptionCode.LOCK_FAILED);
+			}
+
+			// SSE 실시간 전송 추가
+			notifications.forEach(notification ->
+				sseService.sendNotification(
+					notification.getReceiver().getId(),
+					NotificationResponse.from(notification)
+				)
+			);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("일정 알림 락 획득 중 인터럽트 발생", e);
+		} finally {
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+				@Override
+				public void afterCompletion(int status) {
+					if (lock.isHeldByCurrentThread()) {
+						lock.unlock();
+					}
+				}
+			});
+		}
 
 		return ScheduleResponse.from(schedule);
 	}

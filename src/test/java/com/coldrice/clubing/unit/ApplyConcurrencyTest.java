@@ -45,8 +45,8 @@ public class ApplyConcurrencyTest {
 	@BeforeEach
 	void setup() {
 		applicationRepository.deleteAll();
-		memberRepository.deleteAll();
 		clubRepository.deleteAll();
+		memberRepository.deleteAll();
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class ApplyConcurrencyTest {
 			}
 		});
 
-		assertThat(successCount).isEqualTo(threadCount); // ✅ 모두 성공해야 함
+		assertThat(successCount).isEqualTo(threadCount);
 	}
 
 }

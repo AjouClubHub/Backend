@@ -2,6 +2,7 @@ package com.coldrice.clubing.unit;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,9 @@ import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
+import com.coldrice.clubing.domain.schedule.dto.ScheduleRequest;
+import com.coldrice.clubing.domain.schedule.repository.ScheduleRepository;
+import com.coldrice.clubing.domain.schedule.service.ScheduleService;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,6 +35,9 @@ public class NotificationConcurrencyTest {
 
 	@Autowired
 	private AnnouncementService announcementService;
+
+	@Autowired
+	ScheduleService scheduleService;
 
 	@Autowired
 	private ClubRepository clubRepository;
@@ -47,6 +54,9 @@ public class NotificationConcurrencyTest {
 	@Autowired
 	private AnnouncementRepository announcementRepository;
 
+	@Autowired
+	ScheduleRepository scheduleRepository;
+
 	private Member manager;
 	private Club club;
 
@@ -54,10 +64,11 @@ public class NotificationConcurrencyTest {
 	void setup() {
 		// 클린업
 		notificationRepository.deleteAll();
-		membershipRepository.deleteAll();
-		memberRepository.deleteAll();
-		clubRepository.deleteAll();
 		announcementRepository.deleteAll();
+		scheduleRepository.deleteAll();
+		membershipRepository.deleteAll();
+		clubRepository.deleteAll();
+		memberRepository.deleteAll();
 
 		// 클럽 관리자 생성
 		manager = memberRepository.save(Member.builder()
@@ -113,4 +124,25 @@ public class NotificationConcurrencyTest {
 
 		assertThat(actualNotificationCount).isEqualTo(expected);
 	}
+
+	@Test
+	void 일정등록_시_알림이_모든_회원에게_정상적으로_전송된다() {
+		// given
+		ScheduleRequest request = new ScheduleRequest(
+			"OT 일정 공지",
+			"신입생 OT가 체육관에서 열립니다.",
+			LocalDateTime.of(2025, 5, 30, 14, 0),
+			LocalDateTime.of(2025, 5, 30, 17, 0)
+		);
+
+		// when
+		scheduleService.createSchedule(club.getId(), request, manager);
+
+		// then
+		long actualNotificationCount = notificationRepository.count();
+		long expected = 50L;  // 가입된 회원 수
+
+		assertThat(actualNotificationCount).isEqualTo(expected);
+	}
+
 }
