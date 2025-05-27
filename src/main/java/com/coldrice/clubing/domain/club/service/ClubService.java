@@ -58,7 +58,7 @@ public class ClubService {
 	}
 
 	public List<ClubResponse> getApprovedClubs() {
-		List<Club> clubs = clubRepository.findAllByStatus(ClubStatus.APPROVED);
+		List<Club> clubs = clubRepository.findAllByStatusOrderByNameAsc(ClubStatus.APPROVED);
 		return clubs.stream().map(ClubResponse::from).toList();
 	}
 
@@ -91,7 +91,7 @@ public class ClubService {
 	}
 
 	public List<ClubResponse> getPendingClubs() {
-		List<Club> pendingClubs = clubRepository.findAllByStatus(ClubStatus.PENDING);
+		List<Club> pendingClubs = clubRepository.findAllByStatusOrderByNameAsc(ClubStatus.PENDING);
 		return pendingClubs.stream()
 			.map(ClubResponse::from)
 			.toList();

@@ -17,7 +17,7 @@ public interface ClubRepository extends JpaRepository<Club, Long>, JpaSpecificat
 
 	List<Club> findAllByOrderByStatusAsc();
 
-	List<Club> findAllByStatus(ClubStatus clubStatus);
+	List<Club> findAllByStatusOrderByNameAsc(ClubStatus clubStatus);
 
 	List<Club> findAllByManagerId(Long id);
 
