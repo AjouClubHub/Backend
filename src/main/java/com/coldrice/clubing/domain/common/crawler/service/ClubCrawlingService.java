@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.club.entity.Club;
@@ -30,7 +31,6 @@ public class ClubCrawlingService {
 
 	private final ClubRepository clubRepository;
 
-	@Transactional
 	@Scheduled(cron = "0 0 0 */3 * *") // 매 3일마다 00시 00분에 실행
 	@CacheEvict(value = "clubSearch", allEntries = true) // 캐시 삭제
 	public void crawlAndSaveClubs() {
@@ -53,7 +53,10 @@ public class ClubCrawlingService {
 			ClubCategory category = categoryMap.get(fileName);
 
 			try {
-				Document listDoc = Jsoup.connect(baseListUrl + fileName).get();
+				Document listDoc = Jsoup.connect(baseListUrl + fileName)
+					.timeout(5000)
+					.get();
+
 				Elements links = listDoc.select("div.link-box.d-ib > ul > li > a");
 
 				for (Element link : links) {
@@ -73,6 +76,7 @@ public class ClubCrawlingService {
 
 						Document detailDoc = response.parse();
 
+						// 상세 페이지 파싱
 						String name = detailDoc.selectFirst("div.support-box > p").text().trim();
 						String description = detailDoc.select("h5.h5-tit01:contains(동아리 설명) + p").text().trim();
 
@@ -107,27 +111,19 @@ public class ClubCrawlingService {
 							imageUrl = extracted.startsWith("http") ? extracted : "https://www.ajou.ac.kr" + extracted;
 						}
 						final String finalImageUrl = imageUrl;
+						// 파싱 끝
 
-						Club club = clubRepository.findByName(name)
-							.map(existing -> {
-								existing.updateClubInfo(description, category, contact, location, finalKeyword,
-									finalSns, finalImageUrl);
-								return existing;
-							})
-							.orElseGet(() -> Club.builder()
-								.name(name)
-								.description(description)
-								.category(category)
-								.contactInfo(contact)
-								.location(location)
-								.keyword(finalKeyword)
-								.snsUrl(finalSns)
-								.imageUrl(finalImageUrl)
-								.type(ClubType.동아리)
-								.status(ClubStatus.APPROVED)
-								.build());
-
-						clubRepository.save(club);
+						// ====== 별도 트랜잭션으로 저장/업데이트 ======
+						saveOrUpdateSingleClub(
+							name,
+							description,
+							category,
+							contact,
+							location,
+							finalKeyword,
+							finalSns,
+							finalImageUrl
+						);
 						System.out.println("✅ 저장 또는 업데이트됨: " + name);
 
 					} catch (Exception e) {
@@ -148,6 +144,51 @@ public class ClubCrawlingService {
 		} else {
 			System.out.println("\n🎉 모든 상세페이지 크롤링 성공!");
 		}
+	}
+
+	/**
+	 * 한 번 호출될 때마다 새로운 트랜잭션을 열어
+	 * 단일 Club 엔티티 저장/업데이트를 수행합니다.
+	 */
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void saveOrUpdateSingleClub(
+		String name,
+		String description,
+		ClubCategory category,
+		String contact,
+		String location,
+		String keyword,
+		String snsUrl,
+		String imageUrl
+	) {
+		Club club = clubRepository.findByName(name)
+			.map(existing -> {
+				existing.updateClubInfo(
+					description,
+					category,
+					contact,
+					location,
+					keyword,
+					snsUrl,
+					imageUrl
+				);
+				return existing;
+			})
+			.orElseGet(() -> Club.builder()
+				.name(name)
+				.description(description)
+				.category(category)
+				.contactInfo(contact)
+				.location(location)
+				.keyword(keyword)
+				.snsUrl(snsUrl)
+				.imageUrl(imageUrl)
+				.type(ClubType.동아리)
+				.status(ClubStatus.APPROVED)
+				.build()
+			);
+
+		clubRepository.save(club);
 	}
 
 	private String cleanField(String text, String prefix) {
