@@ -20,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,7 @@ public class Club extends Timestamped {
 	@Enumerated(EnumType.STRING)
 	private ClubType type;
 
+	@Lob
 	private String description;
 
 	@Builder.Default
@@ -50,6 +52,7 @@ public class Club extends Timestamped {
 	private ClubStatus status = ClubStatus.PENDING;
 
 	@Enumerated(EnumType.STRING)
+	@Lob
 	private ClubCategory category;
 
 	private String contactInfo; // 전화번호
