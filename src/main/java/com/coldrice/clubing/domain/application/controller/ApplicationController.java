@@ -62,7 +62,8 @@ public class ApplicationController {
 		@PathVariable Long applicationId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		ApplicationDetailWrapper response = applicationService.getAllApplicationDetail(clubId, applicationId, userDetails.getMember());
+		ApplicationDetailWrapper response = applicationService.getAllApplicationDetail(clubId, applicationId,
+			userDetails.getMember());
 		return ResponseBodyDto.success("클럽 가입 신청 단건 조회 성공", response);
 	}
 
@@ -94,7 +95,8 @@ public class ApplicationController {
 		@PathVariable Long applicationId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		RejectionReasonResponse response = applicationService.getRejectionReason(applicationId, userDetails.getMember().getId());
+		RejectionReasonResponse response = applicationService.getRejectionReason(applicationId,
+			userDetails.getMember().getId());
 		return ResponseBodyDto.success("거절 사유 조회 성공", response);
 	}
 
@@ -107,6 +109,5 @@ public class ApplicationController {
 		applicationService.cancelApplication(clubId, userDetails.getMember());
 		return ResponseBodyDto.success("가입 신청이 취소되었습니다.");
 	}
-
 
 }

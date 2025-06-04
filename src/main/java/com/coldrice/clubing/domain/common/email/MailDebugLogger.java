@@ -15,7 +15,7 @@ public class MailDebugLogger implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		JavaMailSenderImpl sender = (JavaMailSenderImpl) javaMailSender;
+		JavaMailSenderImpl sender = (JavaMailSenderImpl)javaMailSender;
 		System.out.println("✅ 메일 설정 확인:");
 		System.out.println("➡ Host = " + sender.getHost()); // localhost 라면 문제 있음
 		System.out.println("➡ Port = " + sender.getPort());

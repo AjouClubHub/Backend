@@ -93,7 +93,7 @@ class JwtAuthenticationFilterTest {
 		when(authenticationManager.authenticate(
 			argThat(arg -> {
 				//  전달된 토큰 내부의 이메일/패스워드가 예상과 일치하는지 확인
-				UsernamePasswordAuthenticationToken t = (UsernamePasswordAuthenticationToken) arg;
+				UsernamePasswordAuthenticationToken t = (UsernamePasswordAuthenticationToken)arg;
 				return "alice@ajou.ac.kr".equals(t.getPrincipal())
 					&& "password123".equals(t.getCredentials());
 			})

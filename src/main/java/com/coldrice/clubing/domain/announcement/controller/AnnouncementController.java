@@ -73,5 +73,4 @@ public class AnnouncementController {
 		return ResponseBodyDto.success("공지사항 단건 조회 성공", response);
 	}
 
-
 }

@@ -46,9 +46,11 @@ public class Member extends Timestamped {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Member member = (Member) o;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Member member = (Member)o;
 		return id != null && id.equals(member.id);
 	}
 

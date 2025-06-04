@@ -51,6 +51,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 public class ClubFlowIntegrationTest {
 
+	static Member user;
+	static Member manager;
+	static String userToken;
+	static String managerToken;
+	static Long clubId;
+	static Long applicationId;
+	static Long announcementId;
 	@Autowired
 	MockMvc mockMvc;
 	@Autowired
@@ -67,18 +74,8 @@ public class ClubFlowIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private ClubRepository clubRepository;
-
 	@MockBean
 	private SmsService smsService;
-
-	static Member user;
-	static Member manager;
-	static String userToken;
-	static String managerToken;
-
-	static Long clubId;
-	static Long applicationId;
-	static Long announcementId;
 
 	@BeforeAll
 	static void setupShared(

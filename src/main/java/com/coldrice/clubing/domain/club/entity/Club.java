@@ -123,7 +123,7 @@ public class Club extends Timestamped {
 	}
 
 	public boolean needsUpdate(String newDescription, ClubCategory newCategory, String newContactInfo,
-	String newLocation, String newKeyword, String newSnsUrl, String newImageUrl) {
+		String newLocation, String newKeyword, String newSnsUrl, String newImageUrl) {
 		return !Objects.equals(this.description, newDescription)
 			|| !Objects.equals(this.category, newCategory)
 			|| !Objects.equals(this.contactInfo, newContactInfo)

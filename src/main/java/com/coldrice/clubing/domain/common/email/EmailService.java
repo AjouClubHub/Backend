@@ -29,7 +29,7 @@ public class EmailService {
 		String code = generateCode();
 		String content = "[Clubing] 인증번호: " + code;
 
-		sendEmail(email,"아주대학교 Clubing 이메일 인증", content);
+		sendEmail(email, "아주대학교 Clubing 이메일 인증", content);
 
 		return code;
 	}

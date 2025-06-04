@@ -5,10 +5,8 @@ import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coldrice.clubing.domain.member.entity.Member;
 import com.coldrice.clubing.domain.membership.entity.Membership;
 import com.coldrice.clubing.domain.membership.entity.MembershipStatus;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
@@ -27,7 +25,8 @@ public class WithdrawnMembershipCleanupScheduler {
 	@Transactional
 	public void deleteDeactivatedMembers() {
 		LocalDateTime cutoff = LocalDateTime.now().minusDays(30); // 예: 탈퇴 후 30일 지난 멤버십 삭제
-		List<Membership> toDelete = membershipRepository.findByStatusAndUpdatedAtBefore(MembershipStatus.WITHDRAWN, cutoff);
+		List<Membership> toDelete = membershipRepository.findByStatusAndUpdatedAtBefore(MembershipStatus.WITHDRAWN,
+			cutoff);
 
 		membershipRepository.deleteAll(toDelete);
 		log.info("클럽 탈퇴 후 30일 지난 멤버십 {}건 삭제 완료", toDelete.size());

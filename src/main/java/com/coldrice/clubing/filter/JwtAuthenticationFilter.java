@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final JwtUtil jwtUtil;
-	private MemberRepository memberRepository;
+	private final MemberRepository memberRepository;
 
 	public JwtAuthenticationFilter(JwtUtil jwtUtil, MemberRepository memberRepository) {
 		this.jwtUtil = jwtUtil;

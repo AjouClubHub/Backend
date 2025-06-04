@@ -2,7 +2,6 @@ package com.coldrice.clubing.domain.recruitment.controller;
 
 import java.util.List;
 
-import org.apache.catalina.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

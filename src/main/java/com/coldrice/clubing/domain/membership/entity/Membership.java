@@ -53,6 +53,15 @@ public class Membership extends Timestamped {
 
 	private String leaveReason;
 
+	public static Membership from(Member member, Club club, MembershipStatus status) {
+		return Membership.builder()
+			.member(member)
+			.club(club)
+			.status(status)
+			.joinedAt(LocalDateTime.now())
+			.build();
+	}
+
 	public void withdraw(String reason) {
 		this.status = MembershipStatus.WITHDRAWN;
 		this.leaveReason = reason;
@@ -63,14 +72,5 @@ public class Membership extends Timestamped {
 		this.status = MembershipStatus.EXPELLED;
 		this.leaveReason = reason;
 		this.leftAt = LocalDateTime.now();
-	}
-
-	public static Membership from(Member member, Club club, MembershipStatus status) {
-		return Membership.builder()
-			.member(member)
-			.club(club)
-			.status(status)
-			.joinedAt(LocalDateTime.now())
-			.build();
 	}
 }

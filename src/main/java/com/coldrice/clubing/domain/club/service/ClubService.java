@@ -68,7 +68,7 @@ public class ClubService {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
-		if(request.status() == ClubStatus.REJECTED && request.rejectionReason() == null) {
+		if (request.status() == ClubStatus.REJECTED && request.rejectionReason() == null) {
 			throw new IllegalArgumentException("거절 사유는 필수입니다.");
 		}
 
@@ -88,7 +88,7 @@ public class ClubService {
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
 		club.validateManager(member);
-		club.updateInfo(request.description(),request.contactInfo(),request.location(),request.keyword());
+		club.updateInfo(request.description(), request.contactInfo(), request.location(), request.keyword());
 	}
 
 	public List<ClubResponse> getPendingClubs() {

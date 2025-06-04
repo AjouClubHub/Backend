@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coldrice.clubing.domain.application.entity.Application;
@@ -27,7 +26,6 @@ public class ApplicationCleanupScheduler {
 
 	private final ApplicationRepository applicationRepository;
 	private final MembershipRepository membershipRepository;
-
 
 	/**
 	 * 💡 스케줄러 설명

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
@@ -74,7 +73,8 @@ public class ScheduleController {
 		@RequestBody @Valid ScheduleRequest request,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		ScheduleResponse response = scheduleService.updateSchedule(clubId, scheduleId, request, userDetails.getMember());
+		ScheduleResponse response = scheduleService.updateSchedule(clubId, scheduleId, request,
+			userDetails.getMember());
 		return ResponseBodyDto.success("일정 수정 완료", response);
 	}
 

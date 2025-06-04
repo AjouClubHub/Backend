@@ -89,7 +89,7 @@ public class AnnouncementService {
 				)
 			);
 
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new IllegalStateException("공지 알림 락 획득 중 인터럽트 발생", e);
 		} finally {
 			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {

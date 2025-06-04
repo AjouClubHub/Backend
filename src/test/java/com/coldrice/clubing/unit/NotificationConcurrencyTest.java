@@ -35,11 +35,9 @@ import com.coldrice.clubing.domain.schedule.service.ScheduleService;
 public class NotificationConcurrencyTest {
 
 	@Autowired
-	private AnnouncementService announcementService;
-
-	@Autowired
 	ScheduleService scheduleService;
-
+	@Autowired
+	private AnnouncementService announcementService;
 	@Autowired
 	private ClubRepository clubRepository;
 
@@ -63,7 +61,6 @@ public class NotificationConcurrencyTest {
 
 	private Member manager;
 	private Club club;
-
 
 	@BeforeEach
 	void setup() {

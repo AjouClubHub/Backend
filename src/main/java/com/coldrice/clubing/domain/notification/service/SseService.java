@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SseService {
 
-	private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
 	private static final Long TIMEOUT = 0L; // 연결 무제한 유지
+	private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
 
 	public SseEmitter connect(Long memberId) {
 

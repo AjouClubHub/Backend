@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmailCodeManager {
 
-	private final RedisTemplate<String, String> redisTemplate;
-
 	private static final long CODE_TIMEOUT = 5; // 인증코드 유효시간 (분)
 	private static final long VERIFIED_TIMEOUT = 30; // 인증 완료 후 유효시간 (분)
+	private final RedisTemplate<String, String> redisTemplate;
 
 	private String codeKey(String email) {
 		return "emailCode: " + email;
