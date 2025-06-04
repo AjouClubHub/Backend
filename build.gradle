@@ -57,6 +57,11 @@ dependencies {
     // test db
     implementation 'com.h2database:h2'
 
+    // Spring Boot Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Micrometer Prometheus Registry (Prometheus로 지표 내보내기)
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {

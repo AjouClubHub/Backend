@@ -26,3 +26,9 @@ spring:
       host: localhost
       port: 6379      # CacheManager가 Redis에 연결할 때 사용
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
