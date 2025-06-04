@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,6 +25,8 @@ import com.coldrice.clubing.domain.club.repository.ClubRepository;
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles("test")
+// CI 환경 변수(CI=true)가 설정되어 있으면 이 클래스의 테스트를 모두 스킵한다.
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true")
 public class ClubCrawlingTest {
 
 	@LocalServerPort
