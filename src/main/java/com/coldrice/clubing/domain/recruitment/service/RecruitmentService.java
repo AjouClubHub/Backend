@@ -67,6 +67,7 @@ public class RecruitmentService {
 			.toList();
 	}
 
+	@Transactional
 	public RecruitmentResponse updateRecruitment(Long clubId, @Valid RecruitmentUpdateRequest request, Member member) {
 		Recruitment recruitment = recruitmentRepository.findByClubId(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_RECRUITMENT));
