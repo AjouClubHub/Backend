@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 import org.junit.jupiter.api.AfterAll;
@@ -42,6 +43,9 @@ import com.coldrice.clubing.domain.member.entity.MemberRole;
 import com.coldrice.clubing.domain.member.repository.MemberRepository;
 import com.coldrice.clubing.domain.membership.repository.MembershipRepository;
 import com.coldrice.clubing.domain.notification.repository.NotificationRepository;
+import com.coldrice.clubing.domain.recruitment.dto.RecruitmentRequest;
+import com.coldrice.clubing.domain.recruitment.dto.RecruitmentUpdateRequest;
+import com.coldrice.clubing.domain.recruitment.repository.RecruitmentRepository;
 import com.coldrice.clubing.domain.schedule.repository.ScheduleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,13 +55,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 public class ClubFlowIntegrationTest {
 
-	static Member user;
-	static Member manager;
-	static String userToken;
-	static String managerToken;
-	static Long clubId;
-	static Long applicationId;
-	static Long announcementId;
+	private static Member user;
+	private static Member manager;
+	private static String userToken;
+	private static String managerToken;
+	private static Long clubId;
+	private static Long applicationId;
+	private static Long announcementId;
+	private static Long recruitmentId;
+
 	@Autowired
 	MockMvc mockMvc;
 	@Autowired
@@ -103,10 +109,12 @@ public class ClubFlowIntegrationTest {
 		@Autowired ApplicationRepository applicationRepository,
 		@Autowired MembershipRepository membershipRepository,
 		@Autowired AnnouncementRepository announcementRepository,
+		@Autowired RecruitmentRepository recruitmentRepository,
 		@Autowired ScheduleRepository scheduleRepository,
 		@Autowired NotificationRepository notificationRepository) {
 
 		scheduleRepository.deleteAll();
+		recruitmentRepository.deleteAll();
 		announcementRepository.deleteAll();
 		notificationRepository.deleteAll();
 		applicationRepository.deleteAll();
@@ -705,4 +713,261 @@ public class ClubFlowIntegrationTest {
 		Announcement after = announcementRepository.findById(announcementId).orElseThrow();
 		assertThat(after.getViews()).isEqualTo(1);
 	}
+
+	// ─── STEP 31: PENDING 상태의 클럽 목록 조회 ─────────────────────────────────
+	@Test
+	@Order(31)
+	void step31_pendingClubs_관리자미인증목록조회() throws Exception {
+		// given: PENDING 상태의 클럽을 하나 더 등록
+		Club pending = Club.builder()
+			.name("Pending Club")
+			.status(ClubStatus.PENDING)
+			.manager(null)
+			.contactInfo("010-0000-0000")
+			.requiredMajors(Collections.emptyList())
+			.description("Pending club description")
+			.keyword("pending")
+			.location("온라인")
+			.type(ClubType.동아리)
+			.build();
+		clubRepository.save(pending);
+
+		// when & then
+		mockMvc.perform(get("/api/clubs/pending")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("관리자 미인증 클럽 목록 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].name").value("Pending Club"))
+			.andExpect(jsonPath("$.data[0].status").value("PENDING"));
+	}
+
+	// ─── STEP 32: 클럽 단건 조회 ─────────────────────────────────
+	@Test
+	@Order(32)
+	void step32_클럽_단건조회() throws Exception {
+		mockMvc.perform(get("/api/clubs/{clubId}", clubId)
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("클럽 단건 조회 성공"))
+			.andExpect(jsonPath("$.data.id").value(clubId))
+			.andExpect(jsonPath("$.data.name").value("SMS 인증 테스트 클럽"))
+			.andExpect(jsonPath("$.data.status").value("APPROVED"));
+	}
+
+	// ─── STEP 33: 마이페이지 조회 ───────────────────────────────────
+	@Test
+	@Order(33)
+	void step33_마이페이지_조회() throws Exception {
+		mockMvc.perform(get("/api/member/mypage")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
+			// 프로필 확인
+			.andExpect(jsonPath("$.data.member.name").value("일반 사용자"))
+			.andExpect(jsonPath("$.data.member.email").value("user@ajou.ac.kr"))
+			.andExpect(jsonPath("$.data.member.major").value("사이버보안학과"))
+			.andExpect(jsonPath("$.data.member.studentId").value("202312345"))
+			// 가입된 클럽(없음)
+			.andExpect(jsonPath("$.data.joinedClubs").isArray())
+			.andExpect(jsonPath("$.data.joinedClubs").isEmpty())
+			// 가입 신청 현황(승인 하나)
+			.andExpect(jsonPath("$.data.applications").isArray())
+			.andExpect(jsonPath("$.data.applications[0].status").value("APPROVED"))
+			// 알림(4건)
+			.andExpect(jsonPath("$.data.notifications").isArray())
+			.andExpect(jsonPath("$.data.notifications.length()").value(4));
+	}
+
+	// ─── STEP 34: 내가 가입한 클럽 단건 조회 ─────────────────────────────────
+	@Test
+	@Order(34)
+	void step34_내가_가입한_클럽_단건_조회() throws Exception {
+		mockMvc.perform(get("/api/my/clubs/{clubId}", clubId)
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("내 가입된 클럽 상세 조회 성공"))
+			.andExpect(jsonPath("$.data.clubId").value(clubId))
+			.andExpect(jsonPath("$.data.clubName").value("SMS 인증 테스트 클럽"))
+			.andExpect(jsonPath("$.data.clubType").value("동아리"));
+	}
+
+	// ─── STEP 35: 클럽 회원 목록 조회 ───────────────────────────────────────
+	@Test
+	@Order(35)
+	void step35_클럽_회원_목록_조회() throws Exception {
+		mockMvc.perform(get("/api/clubs/{clubId}/members", clubId)
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("클럽 회원 목록 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].memberId").value(manager.getId()))
+			.andExpect(jsonPath("$.data[0].name").value("클럽 관리자"));
+	}
+
+	// ─── STEP 36: 클럽 회원 단건 조회 ───────────────────────────────────────
+	@Test
+	@Order(36)
+	void step36_클럽_회원_단건_조회() throws Exception {
+		mockMvc.perform(get("/api/clubs/{clubId}/members/{memberId}", clubId, user.getId())
+				.header("Authorization", managerToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("클럽 회원 단건 조회 성공"))
+			// member 정보 검증
+			.andExpect(jsonPath("$.data.member.memberId").value(user.getId()))
+			.andExpect(jsonPath("$.data.member.name").value("일반 사용자"))
+			.andExpect(jsonPath("$.data.member.memberRole").value("MEMBER"))
+			.andExpect(jsonPath("$.data.applicationInfo.birthDate").value("2000-05-24"))
+			.andExpect(jsonPath("$.data.applicationInfo.studentId").value("여자"))
+			.andExpect(jsonPath("$.data.applicationInfo.gender").value("010-1234-5678"))
+			.andExpect(jsonPath("$.data.applicationInfo.phoneNumber").value("열심히 활동하고 싶습니다!"))
+			.andExpect(jsonPath("$.data.applicationInfo.motivation").value("202312345"));
+	}
+
+	// ─── STEP 37: 내가 관리중인 클럽 목록 조회 ─────────────────────────────────
+	@Test
+	@Order(37)
+	void step37_관리중인_클럽_목록_조회() throws Exception {
+		mockMvc.perform(get("/api/my/manage-clubs")
+				.header("Authorization", managerToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("관리중인 클럽 목록 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(clubId))
+			.andExpect(jsonPath("$.data[0].memberCount").isNumber())
+			.andExpect(jsonPath("$.data[0].pendingApplications").isNumber());
+	}
+
+	// ─── STEP 38: 내가 관리중인 클럽 단건 조회 ─────────────────────────────────
+	@Test
+	@Order(38)
+	void step38_관리중인_클럽_단건_조회() throws Exception {
+		mockMvc.perform(get("/api/my/manage-clubs/{clubId}", clubId)
+				.header("Authorization", managerToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("관리중인 클럽 상세 조회 성공"))
+			// ManagedClubResponse 의 실제 반환 필드명에 맞춰 검증
+			.andExpect(jsonPath("$.data.id").value(clubId))
+			.andExpect(jsonPath("$.data.name").value("SMS 인증 테스트 클럽"))
+			.andExpect(jsonPath("$.data.memberCount").isNumber())
+			.andExpect(jsonPath("$.data.pendingApplications").isNumber())
+			.andExpect(jsonPath("$.data.announcementCount").isNumber());
+	}
+
+	// ─── STEP 39: 모집 공고 등록 (관리자) ─────────────────────────────────
+	@Test
+	@Order(39)
+	void step39_모집_공고_등록() throws Exception {
+		RecruitmentRequest req = new RecruitmentRequest(
+			"신입 모집",
+			"자격요건 A, B",
+			false,
+			LocalDate.now().plusDays(1),
+			LocalDate.now().plusDays(10)
+		);
+
+		String body = mockMvc.perform(post("/api/clubs/{clubId}/recruitments", clubId)
+				.header("Authorization", managerToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(req)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 공고 등록 완료"))
+			.andExpect(jsonPath("$.data.id").isNumber())
+			.andExpect(jsonPath("$.data.title").value("신입 모집"))
+			.andExpect(jsonPath("$.data.requirements").value("자격요건 A, B"))
+			.andReturn().getResponse().getContentAsString();
+
+		// recruitmentId 추출
+		recruitmentId = objectMapper.readTree(body).at("/data/id").asLong();
+	}
+
+	// ─── STEP 40: 모집 공고 단건 조회 ───────────────────────────────────
+	@Test
+	@Order(40)
+	void step40_모집_공고_단건_조회() throws Exception {
+		mockMvc.perform(get("/api/clubs/{clubId}/recruitment", clubId)
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 공고 조회 성공"))
+			.andExpect(jsonPath("$.data.id").value(recruitmentId))
+			.andExpect(jsonPath("$.data.title").value("신입 모집"))
+			.andExpect(jsonPath("$.data.requirements").value("자격요건 A, B"));
+	}
+
+	// ─── STEP 41: 전체 모집 공고 조회 ───────────────────────────────────
+	@Test
+	@Order(41)
+	void step41_전체_모집_공고_조회() throws Exception {
+		mockMvc.perform(get("/api/recruitments")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("전체 모집 공고 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			// id가 방금 등록한 recruitmentId를 포함하고 있는지 확인
+			.andExpect(jsonPath(String.format("$.data[?(@.id==%d)]", recruitmentId)).exists());
+	}
+
+	// ─── STEP 42: OPEN 상태 모집 공고 조회 ────────────────────────────────
+	@Test
+	@Order(42)
+	void step42_OPEN_모집_공고_조회() throws Exception {
+		mockMvc.perform(get("/api/recruitments/open")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 중인 공고 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath(String.format("$.data[?(@.id==%d)]", recruitmentId)).exists());
+	}
+
+	// ─── STEP 43: CLOSED 상태 모집 공고 조회 (아직 없으므로 empty) ──────────
+	@Test
+	@Order(43)
+	void step43_CLOSED_모집_공고_조회_비어있음() throws Exception {
+		mockMvc.perform(get("/api/recruitments/closed")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 마감된 공고 조회 성공"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	// ─── STEP 44: 모집 공고 수정 (관리자) ───────────────────────────────────
+	@Test
+	@Order(44)
+	void step44_모집_공고_수정() throws Exception {
+		RecruitmentUpdateRequest upd = new RecruitmentUpdateRequest(
+			"신입 모집(수정)",
+			"자격요건 A, B, C",
+			false,
+			LocalDate.now().plusDays(2),
+			LocalDate.now().plusDays(12)
+		);
+		mockMvc.perform(patch("/api/clubs/{clubId}/recruitment", clubId)
+				.header("Authorization", managerToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(upd)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 공고 수정 완료"))
+			.andExpect(jsonPath("$.data.title").value("신입 모집(수정)"))
+			.andExpect(jsonPath("$.data.requirements").value("자격요건 A, B, C"))
+			.andExpect(jsonPath("$.data.alwaysOpen").value(false));
+	}
+
+	// ─── STEP 45: 모집 공고 마감 (관리자) ───────────────────────────────────
+	@Test
+	@Order(45)
+	void step45_모집_공고_마감() throws Exception {
+		mockMvc.perform(patch("/api/clubs/{clubId}/recruitments/{recruitmentId}/close",
+				clubId, recruitmentId)
+				.header("Authorization", managerToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.message").value("모집 공고 마감 완료"));
+
+		// 마감된 공고 조회 시 방금 닫은 recruitmentId가 목록에 나와야 한다
+		mockMvc.perform(get("/api/recruitments/closed")
+				.header("Authorization", userToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath(String.format("$.data[?(@.id==%d)]", recruitmentId)).exists());
+	}
+
 }

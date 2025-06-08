@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coldrice.clubing.config.security.UserDetailsImpl;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberDetailWrapper;
-import com.coldrice.clubing.domain.membership.dto.ClubMemberExpelRequest;
 import com.coldrice.clubing.domain.membership.dto.ClubMemberResponse;
 import com.coldrice.clubing.domain.membership.dto.ClubWithdrawRequest;
 import com.coldrice.clubing.domain.membership.dto.ManagedClubResponse;
@@ -80,18 +79,18 @@ public class MembershipController {
 		return ResponseBodyDto.success("클럽 회원 단건 조회 성공", response);
 	}
 
-	@Secured("ROLE_MANAGER")
-	@Operation(summary = "회원 추방", description = "클럽 관리자가 클럽 회원을 추방합니다.")
-	@DeleteMapping("/api/clubs/{clubId}/members/{memberId}/expel")
-	public ResponseBodyDto<Void> expelMember(
-		@PathVariable Long clubId,
-		@PathVariable Long memberId,
-		@RequestBody ClubMemberExpelRequest request,
-		@AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
-		membershipService.expelClubMember(clubId, memberId, userDetails.getMember(), request.reason());
-		return ResponseBodyDto.success("회원 추방 완료");
-	}
+	// @Secured("ROLE_MANAGER")
+	// @Operation(summary = "회원 추방", description = "클럽 관리자가 클럽 회원을 추방합니다.")
+	// @DeleteMapping("/api/clubs/{clubId}/members/{memberId}/expel")
+	// public ResponseBodyDto<Void> expelMember(
+	// 	@PathVariable Long clubId,
+	// 	@PathVariable Long memberId,
+	// 	@RequestBody ClubMemberExpelRequest request,
+	// 	@AuthenticationPrincipal UserDetailsImpl userDetails
+	// ) {
+	// 	membershipService.expelClubMember(clubId, memberId, userDetails.getMember(), request.reason());
+	// 	return ResponseBodyDto.success("회원 추방 완료");
+	// }
 
 	@Secured("ROLE_MANAGER")
 	@Operation(summary = "내가 관리하는 클럽 목록 조회", description = "클럽 관리자 권한을 가진 사용자가 관리중인 클럽 목록을 조회합니다.")

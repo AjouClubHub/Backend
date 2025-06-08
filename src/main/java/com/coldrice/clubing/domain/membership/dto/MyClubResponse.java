@@ -9,7 +9,7 @@ public record MyClubResponse(
 	Long membershipId,
 	Long clubId,
 	ClubType clubType,
-	String ClubName,
+	String clubName,
 	String description,
 	String location,
 	String contactInfo,

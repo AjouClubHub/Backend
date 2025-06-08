@@ -92,22 +92,22 @@ public class MembershipService {
 		return ClubMemberDetailWrapper.of(membership, application);
 	}
 
-	@Transactional
-	public void expelClubMember(Long clubId, Long memberId, Member member, String reason) {
-		Club club = clubRepository.findById(clubId)
-			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
-
-		club.validateManager(member);
-
-		Membership membership = membershipRepository.findByMemberIdAndClubId(memberId, clubId)
-			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_MEMBERSHIP));
-
-		if (membership.getStatus() == MembershipStatus.EXPELLED || membership.getLeftAt() != null) {
-			throw new GlobalException(ExceptionCode.AlREADY_EXPELLED);
-		}
-
-		membership.expel(reason);
-	}
+	// @Transactional
+	// public void expelClubMember(Long clubId, Long memberId, Member member, String reason) {
+	// 	Club club = clubRepository.findById(clubId)
+	// 		.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
+	//
+	// 	club.validateManager(member);
+	//
+	// 	Membership membership = membershipRepository.findByMemberIdAndClubId(memberId, clubId)
+	// 		.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_MEMBERSHIP));
+	//
+	// 	if (membership.getStatus() == MembershipStatus.EXPELLED || membership.getLeftAt() != null) {
+	// 		throw new GlobalException(ExceptionCode.AlREADY_EXPELLED);
+	// 	}
+	//
+	// 	membership.expel(reason);
+	// }
 
 	public List<ManagedClubResponse> getMyManagedClubs(Member member) {
 		List<Club> managedClubs = clubRepository.findAllByManagerId(member.getId());
