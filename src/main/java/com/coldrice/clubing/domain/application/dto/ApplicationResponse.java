@@ -8,6 +8,7 @@ import com.coldrice.clubing.domain.club.entity.ClubType;
 
 public record ApplicationResponse(
 	Long applicationId,
+	Long clubId,
 	ClubType clubType,
 	String clubName,
 	String memberName,
@@ -17,6 +18,7 @@ public record ApplicationResponse(
 	public static ApplicationResponse from(Application application) {
 		return new ApplicationResponse(
 			application.getId(),
+			application.getClub().getId(),
 			application.getClub().getType(),
 			application.getClub().getName(),
 			application.getMember().getName(),
