@@ -60,9 +60,9 @@ public class ApplicationService {
 			Club club = clubRepository.findById(clubId)
 				.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
-			if (club.getManager() == null) {
-				throw new GlobalException(ExceptionCode.NOT_FOUND_MANAGER);
-			}
+			// if (club.getManager() == null) {
+			// 	throw new GlobalException(ExceptionCode.NOT_FOUND_MANAGER);
+			// }
 
 			// 중복 신청 체크
 			if (applicationRepository.existsByClubAndMember(club, member)) {
