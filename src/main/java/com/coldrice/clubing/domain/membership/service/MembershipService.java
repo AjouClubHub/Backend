@@ -80,7 +80,7 @@ public class MembershipService {
 		Club club = clubRepository.findById(clubId)
 			.orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_CLUB));
 
-		club.validateManager(member);
+		// club.validateManager(member);
 
 		Membership membership = membershipRepository
 			.findByClubIdAndMemberId(clubId, memberId)
