@@ -90,7 +90,7 @@ public class ClubService {
 			.toList();
 	}
 
-//	@Cacheable(value = "clubSearch", key = "#request")
+	@Cacheable(value = "clubSearch", key = "#request")
 	public List<ClubResponse> searchClubs(ClubSearchRequest request) {
 		List<Club> clubs = clubRepository.findAll(ClubSpecification.search(request));
 		return clubs.stream().map(ClubResponse::from).toList();

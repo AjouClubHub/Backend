@@ -87,7 +87,7 @@ public class WebSecurityConfig {
 					"/webjars/**",
 					"/api/crawler/**",
 					"/api/clubs",
-					"/api/clubs/search/**",
+					"/api/clubs/search",
 					"/actuator/**"
 				).permitAll()
 				.anyRequest().authenticated() // 그 외 모든 요청 인증처리
