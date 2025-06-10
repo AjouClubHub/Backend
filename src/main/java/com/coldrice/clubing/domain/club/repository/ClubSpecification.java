@@ -27,10 +27,10 @@ public class ClubSpecification {
 				String likeQuery = "%" + request.query().toLowerCase() + "%";
 
 				predicates.add(cb.or(
-					cb.like(cb.lower(root.get("name")), likeQuery),
-					cb.like(cb.lower(root.get("category")), likeQuery),
-					cb.like(cb.lower(root.get("keyword")), likeQuery),
-					cb.like(cb.lower(root.get("description")), likeQuery)
+					cb.like(cb.lower(root.get("name").as(String.class)), likeQuery),
+					cb.like(cb.lower(root.get("category").as(String.class)), likeQuery),
+					cb.like(cb.lower(root.get("keyword").as(String.class)), likeQuery),
+					cb.like(cb.lower(root.get("description").as(String.class)), likeQuery)
 				));
 			}
 
